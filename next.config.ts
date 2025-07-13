@@ -8,6 +8,6 @@ export default nextConfig;
 
 module.exports = {
   images: {
-    remotePatterns: [new URL('https://upload.wikimedia.org/**')],
+    remotePatterns: [new URL('https://upload.wikimedia.org/**'), new URL('https://static.simpsonswiki.com/**')],
   },
 }

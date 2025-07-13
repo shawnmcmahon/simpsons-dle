@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { database, SimpsonCharacter, HintComparison } from '@/lib/database'
+import CharacterAutocomplete from './CharacterAutocomplete'
 
 interface GameAttempt {
   character: SimpsonCharacter
@@ -74,7 +75,7 @@ export default function SimpsonsDLE() {
     try {
       // Find the character by name
       const guessedCharacter = allCharacters.find(char => 
-        char.name.toLowerCase().includes(currentGuess.toLowerCase())
+        char.name.toLowerCase() === currentGuess.toLowerCase()
       )
 
       if (!guessedCharacter) {
@@ -110,6 +111,15 @@ export default function SimpsonsDLE() {
       console.error('Error processing guess:', err)
       alert('Error processing your guess. Please try again.')
     }
+  }
+
+  const handleCharacterSelect = (character: SimpsonCharacter) => {
+    // Auto-submit when a character is selected from dropdown
+    setCurrentGuess(character.name)
+    // Small delay to ensure state is updated before processing
+    setTimeout(() => {
+      handleGuess()
+    }, 100)
   }
 
   const getHintColor = (status: 'correct' | 'incorrect' | 'partial') => {
@@ -173,10 +183,10 @@ export default function SimpsonsDLE() {
         {/* Today's Character Image */}
         <div className="mb-6">
           <Image
-            src={todaysCharacter.image_url}
-            alt="Today's Character"
-            width={300}
-            height={400}
+            src={gameCompleted ? todaysCharacter.image_url : "https://static.simpsonswiki.com/images/b/b1/AllSimpsonsCharacters.png"}
+            alt={gameCompleted ? "Today's Character" : "Mystery Character"}
+            width={600}
+            height={800}
             className="mx-auto rounded-lg shadow-lg"
             priority
           />
@@ -190,48 +200,46 @@ export default function SimpsonsDLE() {
         )}
 
         {/* Original Hints */}
-        <div className="flex gap-4 mb-8 justify-center">
-          <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
-            Season {todaysCharacter.first_season}
+        <div className="mb-8">
+          {/* Hint Labels */}
+          <div className="flex gap-4 mb-2 justify-center">
+            <div className="w-16 text-center">
+              <span className="text-sm font-bold text-gray-700">Season</span>
+            </div>
+            <div className="w-16 text-center">
+              <span className="text-sm font-bold text-gray-700">Occupation</span>
+            </div>
+            <div className="w-16 text-center">
+              <span className="text-sm font-bold text-gray-700">First Episode</span>
+            </div>
+            <div className="w-16 text-center">
+              <span className="text-sm font-bold text-gray-700">Gender</span>
+            </div>
+            <div className="w-16 text-center">
+              <span className="text-sm font-bold text-gray-700">Age Group</span>
+            </div>
           </div>
-          <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
-            {todaysCharacter.occupation}
-          </div>
-          <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center">
-            {todaysCharacter.first_episode}
-          </div>
-          <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
-            {todaysCharacter.gender}
-          </div>
-          <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
-            {todaysCharacter.age_group}
+          
+          {/* Hint Boxes */}
+          <div className="flex gap-4 justify-center">
+            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
+              Season {todaysCharacter.first_season}
+            </div>
+            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
+              {todaysCharacter.occupation}
+            </div>
+            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center">
+              {todaysCharacter.first_episode}
+            </div>
+            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
+              {todaysCharacter.gender}
+            </div>
+            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
+              {todaysCharacter.age_group}
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Input Boxes */}
-      {!gameCompleted && (
-        <div className="flex flex-col gap-4 w-full max-w-md mb-8">
-          {[0, 1, 2, 3, 4].map((index) => (
-            <input
-              key={index}
-              type="text"
-              placeholder={`Guess ${index + 1}`}
-              value={index < attempts.length ? attempts[index].character.name : (index === attempts.length ? currentGuess : '')}
-              onChange={(e) => index === attempts.length ? setCurrentGuess(e.target.value) : undefined}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && index === attempts.length) {
-                  handleGuess()
-                }
-              }}
-              disabled={index !== attempts.length || gameCompleted}
-              className={`px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black font-semibold ${
-                index < attempts.length ? 'bg-gray-200 cursor-not-allowed text-gray-800' : ''
-              }`}
-            />
-          ))}
-        </div>
-      )}
 
       {/* Attempt Results */}
       {attempts.map((attempt, index) => (
@@ -255,6 +263,24 @@ export default function SimpsonsDLE() {
           </div>
         </div>
       ))}
+
+      {/* Input Boxes */}
+      {!gameCompleted && (
+        <div className="flex flex-col gap-4 w-full max-w-md">
+          {[0, 1, 2, 3, 4].map((index) => (
+            <CharacterAutocomplete
+              key={index}
+              value={index < attempts.length ? attempts[index].character.name : (index === attempts.length ? currentGuess : '')}
+              onChange={(value) => index === attempts.length ? setCurrentGuess(value) : undefined}
+              onSelect={index === attempts.length ? handleCharacterSelect : () => {}}
+              characters={allCharacters}
+              placeholder={`Guess ${index + 1}`}
+              disabled={index !== attempts.length || gameCompleted}
+              className={index < attempts.length ? 'bg-gray-200 cursor-not-allowed text-gray-800' : ''}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Final Result */}
       {gameCompleted && (
