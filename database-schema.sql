@@ -1,8 +1,8 @@
 -- Simpson's DLE Database Schema
 -- Run this in your Supabase SQL editor
 
--- Enable Row Level Security
-ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret-here';
+-- Note: This schema creates tables for the Simpson's DLE game
+-- The JWT secret line has been removed as it's not needed for basic functionality
 
 -- Create tables
 CREATE TABLE IF NOT EXISTS game_words (
