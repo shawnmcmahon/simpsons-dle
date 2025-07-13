@@ -209,41 +209,15 @@ export default function SimpsonsDLE() {
         </div>
       </div>
 
-      {/* Attempt Results */}
-      {attempts.map((attempt, index) => (
-        <div key={index} className="mb-4">
-          <div className="text-center mb-2">
-            <span className="font-bold text-gray-700">Attempt {index + 1}: {attempt.character.name}</span>
-          </div>
-          <div className="flex gap-4 justify-center">
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.season)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center`}>
-              Season {attempt.character.first_season}
-            </div>
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.occupation)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center`}>
-              {attempt.character.occupation}
-            </div>
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.episode)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center`}>
-              {attempt.character.first_episode}
-            </div>
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.gender)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center`}>
-              {attempt.character.gender}
-            </div>
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.ageGroup)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center`}>
-              {attempt.character.age_group}
-            </div>
-          </div>
-        </div>
-      ))}
-
       {/* Input Boxes */}
       {!gameCompleted && (
-        <div className="flex flex-col gap-4 w-full max-w-md">
+        <div className="flex flex-col gap-4 w-full max-w-md mb-8">
           {[0, 1, 2, 3, 4].map((index) => (
             <input
               key={index}
               type="text"
               placeholder={`Guess ${index + 1}`}
-              value={index === attempts.length ? currentGuess : ''}
+              value={index < attempts.length ? attempts[index].character.name : (index === attempts.length ? currentGuess : '')}
               onChange={(e) => index === attempts.length ? setCurrentGuess(e.target.value) : undefined}
               onKeyPress={(e) => {
                 if (e.key === 'Enter' && index === attempts.length) {
@@ -251,13 +225,36 @@ export default function SimpsonsDLE() {
                 }
               }}
               disabled={index !== attempts.length || gameCompleted}
-              className={`px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                index !== attempts.length ? 'bg-gray-100 cursor-not-allowed' : ''
+              className={`px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black font-semibold ${
+                index < attempts.length ? 'bg-gray-200 cursor-not-allowed text-gray-800' : ''
               }`}
             />
           ))}
         </div>
       )}
+
+      {/* Attempt Results */}
+      {attempts.map((attempt, index) => (
+        <div key={index} className="mb-4">
+          <div className="flex gap-4 justify-center">
+            <div className={`w-16 h-16 ${getHintColor(attempt.hints.season)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg`}>
+              Season {attempt.character.first_season}
+            </div>
+            <div className={`w-16 h-16 ${getHintColor(attempt.hints.occupation)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg`}>
+              {attempt.character.occupation}
+            </div>
+            <div className={`w-16 h-16 ${getHintColor(attempt.hints.episode)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center shadow-lg`}>
+              {attempt.character.first_episode}
+            </div>
+            <div className={`w-16 h-16 ${getHintColor(attempt.hints.gender)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg`}>
+              {attempt.character.gender}
+            </div>
+            <div className={`w-16 h-16 ${getHintColor(attempt.hints.ageGroup)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg`}>
+              {attempt.character.age_group}
+            </div>
+          </div>
+        </div>
+      ))}
 
       {/* Final Result */}
       {gameCompleted && (
