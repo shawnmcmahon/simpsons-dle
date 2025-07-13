@@ -1,146 +1,243 @@
 import { supabase } from './supabase'
 
 // Types for our database
-export interface GameWord {
+export interface SimpsonCharacter {
   id: number
-  word: string
-  category: string
-  difficulty: 'easy' | 'medium' | 'hard'
+  name: string
+  image_url: string
+  first_season: number
+  occupation: string
+  first_episode: string
+  gender: 'Male' | 'Female'
+  age_group: 'Child' | 'Adult' | 'Elder'
   created_at: string
 }
 
-export interface UserScore {
+export interface DailyCharacter {
   id: number
-  user_id?: string
-  word_id: number
-  attempts: number
-  completed: boolean
-  time_taken: number
+  character_id: number
+  game_date: string
   created_at: string
 }
 
-export interface GameState {
+export interface UserGame {
   id: number
   user_id?: string
-  current_word: string
+  daily_character_id: number
   attempts: string[]
   completed: boolean
+  attempts_count: number
   created_at: string
+}
+
+export interface HintComparison {
+  season: 'correct' | 'incorrect' | 'partial'
+  occupation: 'correct' | 'incorrect' | 'partial'
+  episode: 'correct' | 'incorrect' | 'partial'
+  gender: 'correct' | 'incorrect' | 'partial'
+  ageGroup: 'correct' | 'incorrect' | 'partial'
 }
 
 // Database functions
 export const database = {
-  // Get a random word for the game
-  async getRandomWord(category?: string): Promise<GameWord | null> {
-    let query = supabase
-      .from('game_words')
-      .select('*')
+  // Get today's character
+  async getTodaysCharacter(): Promise<SimpsonCharacter | null> {
+    const today = new Date().toISOString().split('T')[0]
     
-    if (category) {
-      query = query.eq('category', category)
-    }
-    
-    const { data, error } = await query
-    
-    if (error) {
-      console.error('Error fetching random word:', error)
-      return null
-    }
-    
-    if (!data || data.length === 0) {
-      return null
-    }
-    
-    // Return a random word from the results
-    const randomIndex = Math.floor(Math.random() * data.length)
-    return data[randomIndex]
-  },
-
-  // Save user score
-  async saveScore(score: Omit<UserScore, 'id' | 'created_at'>): Promise<UserScore | null> {
     const { data, error } = await supabase
-      .from('user_scores')
-      .insert([score])
-      .select()
+      .from('daily_characters')
+      .select(`
+        *,
+        simpson_characters (*)
+      `)
+      .eq('game_date', today)
       .single()
     
     if (error) {
-      console.error('Error saving score:', error)
+      console.error('Error fetching today\'s character:', error)
+      return null
+    }
+    
+    return data?.simpson_characters || null
+  },
+
+  // Get a character by name
+  async getCharacterByName(name: string): Promise<SimpsonCharacter | null> {
+    const { data, error } = await supabase
+      .from('simpson_characters')
+      .select('*')
+      .ilike('name', `%${name}%`)
+      .single()
+    
+    if (error) {
+      console.error('Error fetching character by name:', error)
       return null
     }
     
     return data
   },
 
-  // Get user's best scores
-  async getUserScores(userId?: string, limit = 10): Promise<UserScore[]> {
-    let query = supabase
-      .from('user_scores')
+  // Get all characters (for search/autocomplete)
+  async getAllCharacters(): Promise<SimpsonCharacter[]> {
+    const { data, error } = await supabase
+      .from('simpson_characters')
       .select('*')
-      .order('created_at', { ascending: false })
-      .limit(limit)
-    
-    if (userId) {
-      query = query.eq('user_id', userId)
-    }
-    
-    const { data, error } = await query
+      .order('name')
     
     if (error) {
-      console.error('Error fetching user scores:', error)
+      console.error('Error fetching all characters:', error)
       return []
     }
     
     return data || []
   },
 
-  // Save game state
-  async saveGameState(state: Omit<GameState, 'id' | 'created_at'>): Promise<GameState | null> {
+  // Compare hints between two characters
+  compareHints(targetCharacter: SimpsonCharacter, guessedCharacter: SimpsonCharacter): HintComparison {
+    return {
+      season: targetCharacter.first_season === guessedCharacter.first_season ? 'correct' : 'incorrect',
+      occupation: targetCharacter.occupation === guessedCharacter.occupation ? 'correct' : 'incorrect',
+      episode: targetCharacter.first_episode === guessedCharacter.first_episode ? 'correct' : 'incorrect',
+      gender: targetCharacter.gender === guessedCharacter.gender ? 'correct' : 'incorrect',
+      ageGroup: targetCharacter.age_group === guessedCharacter.age_group ? 'correct' : 'incorrect'
+    }
+  },
+
+  // Get or create user game for today
+  async getUserGame(userId?: string): Promise<UserGame | null> {
+    const today = new Date().toISOString().split('T')[0]
+    
+    // First, get today's daily character
+    const { data: dailyChar, error: dailyError } = await supabase
+      .from('daily_characters')
+      .select('*')
+      .eq('game_date', today)
+      .single()
+    
+    if (dailyError || !dailyChar) {
+      console.error('Error fetching daily character:', dailyError)
+      return null
+    }
+
+    // Check if user already has a game for today
+    let query = supabase
+      .from('user_games')
+      .select('*')
+      .eq('daily_character_id', dailyChar.id)
+    
+    if (userId) {
+      query = query.eq('user_id', userId)
+    } else {
+      query = query.is('user_id', null)
+    }
+    
+    const { data: existingGame, error: gameError } = await query.single()
+    
+    if (existingGame) {
+      return existingGame
+    }
+
+    // Create new game for today
+    const { data: newGame, error: createError } = await supabase
+      .from('user_games')
+      .insert([{
+        user_id: userId || null,
+        daily_character_id: dailyChar.id,
+        attempts: [],
+        completed: false,
+        attempts_count: 0
+      }])
+      .select()
+      .single()
+    
+    if (createError) {
+      console.error('Error creating new game:', createError)
+      return null
+    }
+    
+    return newGame
+  },
+
+  // Update user game with new attempt
+  async updateGameAttempt(gameId: number, attempt: string, completed: boolean): Promise<UserGame | null> {
+    // First get the current game to update the attempts array
+    const { data: currentGame, error: fetchError } = await supabase
+      .from('user_games')
+      .select('attempts, attempts_count')
+      .eq('id', gameId)
+      .single()
+    
+    if (fetchError) {
+      console.error('Error fetching current game:', fetchError)
+      return null
+    }
+    
+    const updatedAttempts = [...(currentGame.attempts || []), attempt]
+    const updatedAttemptsCount = (currentGame.attempts_count || 0) + 1
+    
     const { data, error } = await supabase
-      .from('game_states')
-      .insert([state])
+      .from('user_games')
+      .update({
+        attempts: updatedAttempts,
+        completed,
+        attempts_count: updatedAttemptsCount
+      })
+      .eq('id', gameId)
       .select()
       .single()
     
     if (error) {
-      console.error('Error saving game state:', error)
+      console.error('Error updating game attempt:', error)
       return null
     }
     
     return data
   },
 
-  // Get current game state
-  async getGameState(userId?: string): Promise<GameState | null> {
+  // Get user's game history
+  async getUserGameHistory(userId?: string, limit = 10): Promise<UserGame[]> {
     let query = supabase
-      .from('game_states')
-      .select('*')
-      .eq('completed', false)
+      .from('user_games')
+      .select(`
+        *,
+        daily_characters (
+          game_date,
+          simpson_characters (name)
+        )
+      `)
       .order('created_at', { ascending: false })
-      .limit(1)
+      .limit(limit)
     
     if (userId) {
       query = query.eq('user_id', userId)
+    } else {
+      query = query.is('user_id', null)
     }
     
     const { data, error } = await query
     
     if (error) {
-      console.error('Error fetching game state:', error)
-      return null
+      console.error('Error fetching game history:', error)
+      return []
     }
     
-    return data?.[0] || null
+    return data || []
   },
 
-  // Get leaderboard
-  async getLeaderboard(limit = 10): Promise<UserScore[]> {
+  // Get leaderboard (users who completed games)
+  async getLeaderboard(limit = 10): Promise<UserGame[]> {
     const { data, error } = await supabase
-      .from('user_scores')
-      .select('*')
+      .from('user_games')
+      .select(`
+        *,
+        daily_characters (
+          game_date,
+          simpson_characters (name)
+        )
+      `)
       .eq('completed', true)
-      .order('attempts', { ascending: true })
-      .order('time_taken', { ascending: true })
+      .order('attempts_count', { ascending: true })
+      .order('created_at', { ascending: false })
       .limit(limit)
     
     if (error) {
@@ -149,5 +246,35 @@ export const database = {
     }
     
     return data || []
+  },
+
+  // Check if user has already played today
+  async hasPlayedToday(userId?: string): Promise<boolean> {
+    const today = new Date().toISOString().split('T')[0]
+    
+    const { data: dailyChar, error: dailyError } = await supabase
+      .from('daily_characters')
+      .select('id')
+      .eq('game_date', today)
+      .single()
+    
+    if (dailyError || !dailyChar) {
+      return false
+    }
+
+    let query = supabase
+      .from('user_games')
+      .select('id')
+      .eq('daily_character_id', dailyChar.id)
+    
+    if (userId) {
+      query = query.eq('user_id', userId)
+    } else {
+      query = query.is('user_id', null)
+    }
+    
+    const { data, error } = await query.single()
+    
+    return !error && !!data
   }
 } 
