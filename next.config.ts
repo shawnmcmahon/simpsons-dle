@@ -1,13 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'static.simpsonswiki.com',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
-
-module.exports = {
-  images: {
-    remotePatterns: [new URL('https://upload.wikimedia.org/**'), new URL('https://static.simpsonswiki.com/**')],
-  },
-}

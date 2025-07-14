@@ -19,46 +19,75 @@ export default function SimpsonsDLE() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [allCharacters, setAllCharacters] = useState<SimpsonCharacter[]>([])
+  const [isRandomGame, setIsRandomGame] = useState(false)
 
   useEffect(() => {
     initializeGame()
   }, [])
 
-  const initializeGame = async () => {
+  const initializeGame = async (useRandomCharacter = false) => {
     try {
       setLoading(true)
       
-      // Get today's character
-      const character = await database.getTodaysCharacter()
+      let character: SimpsonCharacter | null = null
+      
+      if (useRandomCharacter) {
+        // Get a random character for practice mode
+        const characters = await database.getAllCharacters()
+        if (characters.length > 0) {
+          const randomIndex = Math.floor(Math.random() * characters.length)
+          character = characters[randomIndex]
+          setIsRandomGame(true)
+        }
+      } else {
+        // Get today's character
+        character = await database.getTodaysCharacter()
+        setIsRandomGame(false)
+      }
+      
       if (!character) {
-        setError('No character found for today')
+        setError('No character found')
         return
       }
       setTodaysCharacter(character)
       
       // Get all characters for search
       const characters = await database.getAllCharacters()
+      console.log('Loaded characters:', characters.length)
+      if (characters.length === 0) {
+        console.log('No characters loaded - this might indicate a database connection issue')
+      } else {
+        console.log('Sample characters:', characters.slice(0, 5).map(c => c.name))
+      }
       setAllCharacters(characters)
       
-      // Check if user has already played today
-      const hasPlayed = await database.hasPlayedToday()
-      if (hasPlayed) {
-        // Load existing game state
-        const userGame = await database.getUserGame()
-        if (userGame) {
-          setGameCompleted(userGame.completed)
-          setGameWon(userGame.completed)
-          
-          // Load previous attempts
-          const loadedAttempts: GameAttempt[] = []
-          for (const attemptName of userGame.attempts) {
-            const guessedCharacter = await database.getCharacterByName(attemptName)
-            if (guessedCharacter && character) {
-              const hints = database.compareHints(character, guessedCharacter)
-              loadedAttempts.push({ character: guessedCharacter, hints })
+      // Reset game state for new game
+      setAttempts([])
+      setCurrentGuess('')
+      setGameCompleted(false)
+      setGameWon(false)
+      
+      // Only check for existing daily game if not random
+      if (!useRandomCharacter) {
+        const hasPlayed = await database.hasPlayedToday()
+        if (hasPlayed) {
+          // Load existing game state
+          const userGame = await database.getUserGame()
+          if (userGame) {
+            setGameCompleted(userGame.completed)
+            setGameWon(userGame.completed)
+            
+            // Load previous attempts
+            const loadedAttempts: GameAttempt[] = []
+            for (const attemptName of userGame.attempts) {
+              const guessedCharacter = await database.getCharacterByName(attemptName)
+              if (guessedCharacter && character) {
+                const hints = database.compareHints(character, guessedCharacter)
+                loadedAttempts.push({ character: guessedCharacter, hints })
+              }
             }
+            setAttempts(loadedAttempts)
           }
-          setAttempts(loadedAttempts)
         }
       }
     } catch (err) {
@@ -73,12 +102,20 @@ export default function SimpsonsDLE() {
     if (!currentGuess.trim() || !todaysCharacter || gameCompleted) return
 
     try {
-      // Find the character by name
+      // Find the character by name with more flexible matching
+      const normalizedGuess = currentGuess.trim().toLowerCase()
+      console.log('User guess:', normalizedGuess)
+      console.log('Available characters count:', allCharacters.length)
+      console.log('Available character names:', allCharacters.map(c => c.name.toLowerCase()))
+      
       const guessedCharacter = allCharacters.find(char => 
-        char.name.toLowerCase() === currentGuess.toLowerCase()
+        char.name.toLowerCase() === normalizedGuess ||
+        char.name.toLowerCase().includes(normalizedGuess) ||
+        normalizedGuess.includes(char.name.toLowerCase())
       )
 
       if (!guessedCharacter) {
+        console.log('No character found for guess:', normalizedGuess)
         alert('Character not found. Please try a different name.')
         return
       }
@@ -122,6 +159,10 @@ export default function SimpsonsDLE() {
     }, 100)
   }
 
+  const handleNewGame = async () => {
+    await initializeGame(true) // Start a new random game
+  }
+
   const getHintColor = (status: 'correct' | 'incorrect' | 'partial') => {
     switch (status) {
       case 'correct': return 'bg-green-500'
@@ -131,16 +172,7 @@ export default function SimpsonsDLE() {
     }
   }
 
-  const getHintText = (character: SimpsonCharacter, hintType: keyof HintComparison) => {
-    switch (hintType) {
-      case 'season': return `Season ${character.first_season}`
-      case 'occupation': return character.occupation
-      case 'episode': return character.first_episode
-      case 'gender': return character.gender
-      case 'ageGroup': return character.age_group
-      default: return ''
-    }
-  }
+
 
   if (loading) {
     return (
@@ -282,17 +314,23 @@ export default function SimpsonsDLE() {
         </div>
       )}
 
-      {/* Final Result */}
-      {gameCompleted && (
-        <div className="mt-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Today's Character: {todaysCharacter.name}
-          </h2>
-          <p className="text-gray-600">
-            Come back tomorrow for a new character!
-          </p>
-        </div>
-      )}
+              {/* Final Result */}
+        {gameCompleted && (
+          <div className="mt-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              {isRandomGame ? 'Character' : 'Today&apos;s Character'}: {todaysCharacter.name}
+            </h2>
+            <p className="text-gray-600 mb-4">
+              {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
+            </p>
+            <button
+              onClick={handleNewGame}
+              className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            >
+              New Game
+            </button>
+          </div>
+        )}
     </div>
   )
 } 
