@@ -179,7 +179,7 @@ export default function SimpsonsDLE() {
       <div className="min-h-screen flex items-center justify-center bg-yellow-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading today&apos;s character...</p>
+          <p className="text-lg text-gray-600">Loading today{'\u2019'}s character...</p>
         </div>
       </div>
     )
@@ -211,13 +211,13 @@ export default function SimpsonsDLE() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-yellow-100 p-8">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-blue-600 mb-4">Simpson&apos;s DLE</h1>
-        <p className="text-xl text-gray-700 mb-6">Guess the Simpson&apos;s Character</p>
+        <p className="text-xl text-gray-700 mb-6">Guess the Simpson{'\u2019'}s Character</p>
         
         {/* Today's Character Image */}
         <div className="mb-6">
           <Image
             src={gameCompleted ? todaysCharacter.image_url : "https://static.simpsonswiki.com/images/b/b1/AllSimpsonsCharacters.png"}
-            alt={gameCompleted ? "Today&apos;s Character" : "Mystery Character"}
+            alt={gameCompleted ? `Today${'\u2019'}s Character` : "Mystery Character"}
             width={600}
             height={800}
             className={`mx-auto rounded-lg shadow-lg ${gameCompleted ? 'max-w-[25vw] max-h-[25vh] w-auto h-auto' : ''}`}
@@ -334,7 +334,7 @@ export default function SimpsonsDLE() {
         {gameCompleted && (
           <div className="mt-8 text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              {isRandomGame ? 'Character' : 'Today&apos;s Character'}: {todaysCharacter.name}
+              {isRandomGame ? 'Character' : `Today${'\u2019'}s Character`}: {todaysCharacter.name}
             </h2>
             <p className="text-gray-600 mb-4">
               {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
