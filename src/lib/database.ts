@@ -131,7 +131,7 @@ export const database = {
       query = query.is('user_id', null)
     }
     
-    const { data: existingGame, error: gameError } = await query.single()
+    const { data: existingGame } = await query.single()
     
     if (existingGame) {
       return existingGame
