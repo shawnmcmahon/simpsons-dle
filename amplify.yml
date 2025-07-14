@@ -3,14 +3,10 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        - chmod +x build.sh
     build:
       commands:
-        - npm run build
-        - echo "{}" > out/required-server-files.json
-        - echo "{}" > out/server-reference-manifest.json
-        - echo "{}" > out/trace
-        - echo "Static build completed with server files"
+        - ./build.sh
   artifacts:
     baseDirectory: out
     files:

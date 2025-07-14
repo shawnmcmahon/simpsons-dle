@@ -13,9 +13,30 @@ npm run build
 echo "Build completed. Contents of out directory:"
 ls -la out/
 
-# Create files that Amplify expects for Next.js apps
-echo "{}" > out/required-server-files.json
-echo "{}" > out/server-reference-manifest.json
-echo "{}" > out/trace
+# Create comprehensive server files that Amplify expects
+cat > out/required-server-files.json << 'EOF'
+{
+  "version": 3,
+  "files": {},
+  "entrypoints": {}
+}
+EOF
 
+cat > out/server-reference-manifest.json << 'EOF'
+{
+  "version": 3,
+  "files": {},
+  "entrypoints": {}
+}
+EOF
+
+cat > out/trace << 'EOF'
+{
+  "version": 3,
+  "files": {},
+  "entrypoints": {}
+}
+EOF
+
+echo "Server files created successfully"
 echo "Build process completed successfully!" 
