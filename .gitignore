@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Enforce all .sql files go in the .sql/ folder
+!/.sql/
+/*.sql
+
+# (Optional) Ignore all SQL scripts from version control
+# Uncomment the next line if you want to ignore them:
+# .sql/*
