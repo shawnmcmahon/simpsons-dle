@@ -179,7 +179,7 @@ export default function SimpsonsDLE() {
       <div className="min-h-screen flex items-center justify-center bg-yellow-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading today&apos;s character...</p>
+          <p className="text-lg text-gray-600">Loading today's character...</p>
         </div>
       </div>
     )
@@ -211,15 +211,16 @@ export default function SimpsonsDLE() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-yellow-100 p-8">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-blue-600 mb-4">Simpson&apos;s DLE</h1>
+        <p className="text-xl text-gray-700 mb-6">Guess the Simpson's Character</p>
         
         {/* Today's Character Image */}
         <div className="mb-6">
           <Image
             src={gameCompleted ? todaysCharacter.image_url : "https://static.simpsonswiki.com/images/b/b1/AllSimpsonsCharacters.png"}
-            alt={gameCompleted ? "Today&apos;s Character" : "Mystery Character"}
+            alt={gameCompleted ? "Today's Character" : "Mystery Character"}
             width={600}
             height={800}
-            className="mx-auto rounded-lg shadow-lg"
+            className={`mx-auto rounded-lg shadow-lg ${gameCompleted ? 'max-w-[25vw] max-h-[25vh] w-auto h-auto' : ''}`}
             priority
           />
         </div>
@@ -235,39 +236,39 @@ export default function SimpsonsDLE() {
         <div className="mb-8">
           {/* Hint Labels */}
           <div className="flex gap-4 mb-2 justify-center">
-            <div className="w-16 text-center">
-              <span className="text-sm font-bold text-gray-700">Season</span>
+            <div className="w-20 text-center">
+              <span className="text-sm font-bold text-gray-700">First Season Appearance</span>
             </div>
-            <div className="w-16 text-center">
+            <div className="w-20 text-center">
+              <span className="text-sm font-bold text-gray-700">First Episode Appearance</span>
+            </div>
+            <div className="w-20 text-center">
               <span className="text-sm font-bold text-gray-700">Occupation</span>
             </div>
-            <div className="w-16 text-center">
-              <span className="text-sm font-bold text-gray-700">First Episode</span>
-            </div>
-            <div className="w-16 text-center">
+            <div className="w-20 text-center">
               <span className="text-sm font-bold text-gray-700">Gender</span>
             </div>
-            <div className="w-16 text-center">
-              <span className="text-sm font-bold text-gray-700">Age Group</span>
+            <div className="w-20 text-center">
+              <span className="text-sm font-bold text-gray-700">Hair Color</span>
             </div>
           </div>
           
           {/* Hint Boxes */}
           <div className="flex gap-4 justify-center">
-            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
+            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
               Season {todaysCharacter.first_season}
             </div>
-            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
-              {todaysCharacter.occupation}
-            </div>
-            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center">
+            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center p-2">
               {todaysCharacter.first_episode}
             </div>
-            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
+            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
+              {todaysCharacter.occupation}
+            </div>
+            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
               {todaysCharacter.gender}
             </div>
-            <div className="w-16 h-16 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center">
-              {todaysCharacter.age_group}
+            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
+              {todaysCharacter.hair_color}
             </div>
           </div>
         </div>
@@ -277,40 +278,55 @@ export default function SimpsonsDLE() {
       {attempts.map((attempt, index) => (
         <div key={index} className="mb-4">
           <div className="flex gap-4 justify-center">
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.season)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg`}>
+            <div className={`w-20 h-20 ${getHintColor(attempt.hints.season)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
               Season {attempt.character.first_season}
             </div>
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.occupation)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg`}>
-              {attempt.character.occupation}
-            </div>
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.episode)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center shadow-lg`}>
+            <div className={`w-20 h-20 ${getHintColor(attempt.hints.episode)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center shadow-lg p-2`}>
               {attempt.character.first_episode}
             </div>
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.gender)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg`}>
+            <div className={`w-20 h-20 ${getHintColor(attempt.hints.occupation)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
+              {attempt.character.occupation}
+            </div>
+            <div className={`w-20 h-20 ${getHintColor(attempt.hints.gender)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
               {attempt.character.gender}
             </div>
-            <div className={`w-16 h-16 ${getHintColor(attempt.hints.ageGroup)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg`}>
-              {attempt.character.age_group}
+            <div className={`w-20 h-20 ${getHintColor(attempt.hints.hairColor)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
+              {attempt.character.hair_color}
             </div>
           </div>
         </div>
       ))}
 
+      {/* Color Key */}
+      <div className="mb-6 text-center">
+        <div className="flex gap-4 justify-center items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-green-500 rounded"></div>
+            <span className="text-sm font-semibold text-gray-700">Green = Correct</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-red-500 rounded"></div>
+            <span className="text-sm font-semibold text-gray-700">Red = Incorrect</span>
+          </div>
+        </div>
+      </div>
+
       {/* Input Boxes */}
       {!gameCompleted && (
         <div className="flex flex-col gap-4 w-full max-w-md">
-          {[0, 1, 2, 3, 4].map((index) => (
-            <CharacterAutocomplete
-              key={index}
-              value={index < attempts.length ? attempts[index].character.name : (index === attempts.length ? currentGuess : '')}
-              onChange={(value) => index === attempts.length ? setCurrentGuess(value) : undefined}
-              onSelect={index === attempts.length ? handleCharacterSelect : () => {}}
-              characters={allCharacters}
-              placeholder={`Guess ${index + 1}`}
-              disabled={index !== attempts.length || gameCompleted}
-              className={index < attempts.length ? 'bg-gray-200 cursor-not-allowed text-gray-800' : ''}
-            />
-          ))}
+          {/* Show only the next guess box */}
+          <div className="text-center mb-2">
+            <p className="text-sm text-gray-600 mb-2">Type a character name to guess:</p>
+          </div>
+          <CharacterAutocomplete
+            value={currentGuess}
+            onChange={setCurrentGuess}
+            onSelect={handleCharacterSelect}
+            characters={allCharacters}
+            placeholder=""
+            disabled={false}
+            className=""
+          />
         </div>
       )}
 
@@ -318,10 +334,10 @@ export default function SimpsonsDLE() {
         {gameCompleted && (
           <div className="mt-8 text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              {isRandomGame ? 'Character' : 'Today&apos;s Character'}: {todaysCharacter.name}
+              {isRandomGame ? 'Character' : "Today's Character"}: {todaysCharacter.name}
             </h2>
             <p className="text-gray-600 mb-4">
-              {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
+              {isRandomGame ? 'Practice mode completed!' : "Come back tomorrow for a new character!"}
             </p>
             <button
               onClick={handleNewGame}

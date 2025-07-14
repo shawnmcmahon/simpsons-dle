@@ -9,7 +9,7 @@ export interface SimpsonCharacter {
   occupation: string
   first_episode: string
   gender: 'Male' | 'Female'
-  age_group: 'Child' | 'Adult' | 'Elder'
+  hair_color: string
   created_at: string
 }
 
@@ -35,7 +35,7 @@ export interface HintComparison {
   occupation: 'correct' | 'incorrect' | 'partial'
   episode: 'correct' | 'incorrect' | 'partial'
   gender: 'correct' | 'incorrect' | 'partial'
-  ageGroup: 'correct' | 'incorrect' | 'partial'
+  hairColor: 'correct' | 'incorrect' | 'partial'
 }
 
 // Database functions
@@ -99,7 +99,7 @@ export const database = {
       occupation: targetCharacter.occupation === guessedCharacter.occupation ? 'correct' : 'incorrect',
       episode: targetCharacter.first_episode === guessedCharacter.first_episode ? 'correct' : 'incorrect',
       gender: targetCharacter.gender === guessedCharacter.gender ? 'correct' : 'incorrect',
-      ageGroup: targetCharacter.age_group === guessedCharacter.age_group ? 'correct' : 'incorrect'
+      hairColor: targetCharacter.hair_color === guessedCharacter.hair_color ? 'correct' : 'incorrect'
     }
   },
 
