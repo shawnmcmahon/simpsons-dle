@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { database, SimpsonCharacter, HintComparison } from '@/lib/database'
 import CharacterAutocomplete from './CharacterAutocomplete'
+import { supabase } from '../lib/supabase';
 
 interface GameAttempt {
   character: SimpsonCharacter
@@ -162,6 +163,22 @@ export default function SimpsonsDLE() {
   const handleNewGame = async () => {
     await initializeGame(true) // Start a new random game
   }
+
+  const handleResetDailyGame = async () => {
+    try {
+      // Get today's user game
+      const userGame = await database.getUserGame();
+      if (userGame) {
+        await supabase
+          .from('user_games')
+          .delete()
+          .eq('id', userGame.id);
+      }
+      window.location.reload();
+    } catch (err) {
+      alert('Failed to reset the daily game.');
+    }
+  };
 
   const getHintColor = (status: 'correct' | 'incorrect' | 'partial') => {
     switch (status) {
@@ -347,6 +364,18 @@ export default function SimpsonsDLE() {
             </button>
           </div>
         )}
+
+      {/* Reset Daily Game Button (only for daily game, not practice mode) */}
+      {!isRandomGame && (
+        <div className="w-full flex justify-center mt-8">
+          <button
+            onClick={handleResetDailyGame}
+            className="px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
+          >
+            Reset Daily Game
+          </button>
+        </div>
+      )}
     </div>
   )
 } 
