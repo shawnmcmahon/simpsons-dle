@@ -16,8 +16,8 @@ async function checkImages() {
       if (!res.ok) {
         console.log(`BROKEN: ${char.name} - ${char.image_url} (Status: ${res.status})`);
       }
-    } catch (err) {
-      console.log(`ERROR: ${char.name} - ${char.image_url} (${err})`);
+    } catch {
+      console.log(`ERROR: ${char.name} - ${char.image_url}`);
     }
   }
 }

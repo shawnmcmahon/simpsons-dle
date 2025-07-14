@@ -11,6 +11,11 @@ interface GameAttempt {
   hints: HintComparison
 }
 
+// Utility functions for practice mode seen characters
+function getTodayKey() {
+  return `simpsons-dle-practice-seen-${new Date().toISOString().split('T')[0]}`;
+}
+
 export default function SimpsonsDLE() {
   const [todaysCharacter, setTodaysCharacter] = useState<SimpsonCharacter | null>(null)
   const [attempts, setAttempts] = useState<GameAttempt[]>([])
@@ -21,6 +26,40 @@ export default function SimpsonsDLE() {
   const [error, setError] = useState<string | null>(null)
   const [allCharacters, setAllCharacters] = useState<SimpsonCharacter[]>([])
   const [isRandomGame, setIsRandomGame] = useState(false)
+
+  // SSR-safe state for seen practice characters
+  const [seenPracticeIds, setSeenPracticeIds] = useState<number[]>([]);
+
+  // Load seen practice characters from localStorage on client only
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const key = getTodayKey();
+      const seen = localStorage.getItem(key);
+      setSeenPracticeIds(seen ? JSON.parse(seen) : []);
+    }
+  }, []);
+
+  // Helper to add a seen character
+  const addSeenPracticeCharacter = (id: number) => {
+    setSeenPracticeIds(prev => {
+      if (!prev.includes(id)) {
+        const updated = [...prev, id];
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(getTodayKey(), JSON.stringify(updated));
+        }
+        return updated;
+      }
+      return prev;
+    });
+  };
+
+  // Helper to reset seen list
+  const resetSeenPracticeCharacters = () => {
+    setSeenPracticeIds([]);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(getTodayKey());
+    }
+  };
 
   useEffect(() => {
     initializeGame()
@@ -39,13 +78,20 @@ export default function SimpsonsDLE() {
       let character: SimpsonCharacter | null = null
       
       if (useRandomCharacter) {
-        // Get a random character for practice mode
-        const characters = await database.getAllCharacters()
-        if (characters.length > 0) {
-          const randomIndex = Math.floor(Math.random() * characters.length)
-          character = characters[randomIndex]
-          setIsRandomGame(true)
+        // Get all characters
+        const characters = await database.getAllCharacters();
+        // Exclude seen ones
+        const unseenCharacters = characters.filter(c => !seenPracticeIds.includes(c.id));
+        if (unseenCharacters.length === 0) {
+          resetSeenPracticeCharacters();
+          setError('You have seen all characters in practice mode today!');
+          setLoading(false);
+          return;
         }
+        const randomIndex = Math.floor(Math.random() * unseenCharacters.length);
+        character = unseenCharacters[randomIndex];
+        addSeenPracticeCharacter(character.id);
+        setIsRandomGame(true);
       } else {
         // Get today's character
         character = await database.getTodaysCharacter()
@@ -150,7 +196,7 @@ export default function SimpsonsDLE() {
       if (userGame) {
         await database.updateGameAttempt(userGame.id, guessedCharacter.name, isGameOver);
       }
-    } catch (err) {
+    } catch {
       alert('Error processing your guess. Please try again.');
     }
   };
