@@ -181,7 +181,7 @@ export default function SimpsonsDLE() {
           .eq('id', userGame.id);
       }
       window.location.reload();
-    } catch (err) {
+    } catch {
       alert('Failed to reset the daily game.');
     }
   };
