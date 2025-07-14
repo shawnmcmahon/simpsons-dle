@@ -14,7 +14,7 @@ interface GameAttempt {
 export default function SimpsonsDLE() {
   const [todaysCharacter, setTodaysCharacter] = useState<SimpsonCharacter | null>(null)
   const [attempts, setAttempts] = useState<GameAttempt[]>([])
-  const [currentGuess, setCurrentGuess] = useState('')
+  const [guessInputs, setGuessInputs] = useState([{ value: '', disabled: false }]);
   const [gameCompleted, setGameCompleted] = useState(false)
   const [gameWon, setGameWon] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -25,6 +25,12 @@ export default function SimpsonsDLE() {
   useEffect(() => {
     initializeGame()
   }, [])
+
+  useEffect(() => {
+    if (!gameCompleted) {
+      setGuessInputs([{ value: '', disabled: false }]);
+    }
+  }, [gameCompleted]);
 
   const initializeGame = async (useRandomCharacter = false) => {
     try {
@@ -64,7 +70,6 @@ export default function SimpsonsDLE() {
       
       // Reset game state for new game
       setAttempts([])
-      setCurrentGuess('')
       setGameCompleted(false)
       setGameWon(false)
       
@@ -100,65 +105,66 @@ export default function SimpsonsDLE() {
   }
 
   const handleGuess = async () => {
-    if (!currentGuess.trim() || !todaysCharacter || gameCompleted) return
+    const currentGuess = guessInputs[guessInputs.length - 1].value;
+    if (!currentGuess.trim() || !todaysCharacter || gameCompleted) return;
 
     try {
-      // Find the character by name with more flexible matching
-      const normalizedGuess = currentGuess.trim().toLowerCase()
-      console.log('User guess:', normalizedGuess)
-      console.log('Available characters count:', allCharacters.length)
-      console.log('Available character names:', allCharacters.map(c => c.name.toLowerCase()))
-      
-      const guessedCharacter = allCharacters.find(char => 
+      const normalizedGuess = currentGuess.trim().toLowerCase();
+      const guessedCharacter = allCharacters.find(char =>
         char.name.toLowerCase() === normalizedGuess ||
         char.name.toLowerCase().includes(normalizedGuess) ||
         normalizedGuess.includes(char.name.toLowerCase())
-      )
+      );
 
       if (!guessedCharacter) {
-        console.log('No character found for guess:', normalizedGuess)
-        alert('Character not found. Please try a different name.')
-        return
+        alert('Character not found. Please try a different name.');
+        return;
       }
 
       // Compare hints
-      const hints = database.compareHints(todaysCharacter, guessedCharacter)
-      const newAttempt: GameAttempt = { character: guessedCharacter, hints }
-      
-      const updatedAttempts = [...attempts, newAttempt]
-      setAttempts(updatedAttempts)
+      const hints = database.compareHints(todaysCharacter, guessedCharacter);
+      const newAttempt: GameAttempt = { character: guessedCharacter, hints };
+      const updatedAttempts = [...attempts, newAttempt];
+      setAttempts(updatedAttempts);
 
       // Check if correct
-      const isCorrect = guessedCharacter.name === todaysCharacter.name
-      const isGameOver = isCorrect || updatedAttempts.length >= 5
+      const isCorrect = guessedCharacter.name === todaysCharacter.name;
+      const isGameOver = isCorrect || updatedAttempts.length >= 5;
 
       if (isGameOver) {
-        setGameCompleted(true)
-        setGameWon(isCorrect)
+        setGameCompleted(true);
+        setGameWon(isCorrect);
+        // Disable all guess inputs
+        setGuessInputs(inputs => inputs.map(g => ({ ...g, disabled: true })));
+      } else {
+        // Disable the current input and add a new one
+        setGuessInputs(inputs => [
+          ...inputs.slice(0, -1),
+          { ...inputs[inputs.length - 1], disabled: true },
+          { value: '', disabled: false }
+        ]);
       }
 
       // Update database
-      const userGame = await database.getUserGame()
+      const userGame = await database.getUserGame();
       if (userGame) {
-        await database.updateGameAttempt(userGame.id, guessedCharacter.name, isGameOver)
+        await database.updateGameAttempt(userGame.id, guessedCharacter.name, isGameOver);
       }
-
-      // Clear current guess and move to next input
-      setCurrentGuess('')
     } catch (err) {
-      console.error('Error processing guess:', err)
-      alert('Error processing your guess. Please try again.')
+      alert('Error processing your guess. Please try again.');
     }
-  }
+  };
 
   const handleCharacterSelect = (character: SimpsonCharacter) => {
-    // Auto-submit when a character is selected from dropdown
-    setCurrentGuess(character.name)
-    // Small delay to ensure state is updated before processing
+    setGuessInputs(inputs =>
+      inputs.map((g, i) =>
+        i === inputs.length - 1 ? { ...g, value: character.name } : g
+      )
+    );
     setTimeout(() => {
-      handleGuess()
-    }, 100)
-  }
+      handleGuess();
+    }, 100);
+  };
 
   const handleNewGame = async () => {
     await initializeGame(true) // Start a new random game
@@ -331,39 +337,48 @@ export default function SimpsonsDLE() {
       {/* Input Boxes */}
       {!gameCompleted && (
         <div className="flex flex-col gap-4 w-full max-w-md">
-          {/* Show only the next guess box */}
-          <div className="text-center mb-2">
-            <p className="text-sm text-gray-600 mb-2">Type a character name to guess:</p>
+          {guessInputs.map((input, idx) => (
+            <CharacterAutocomplete
+              key={idx}
+              value={input.value}
+              onChange={val => {
+                if (!input.disabled) {
+                  setGuessInputs(inputs =>
+                    inputs.map((g, i) => i === idx ? { ...g, value: val } : g)
+                  );
+                }
+              }}
+              onSelect={handleCharacterSelect}
+              characters={allCharacters}
+              placeholder=""
+              disabled={input.disabled}
+              className=""
+            />
+          ))}
+          {/* Guess Counter */}
+          <div className="text-center text-gray-700 mt-2 font-semibold">
+            Guess {guessInputs.length} of 5
           </div>
-          <CharacterAutocomplete
-            value={currentGuess}
-            onChange={setCurrentGuess}
-            onSelect={handleCharacterSelect}
-            characters={allCharacters}
-            placeholder=""
-            disabled={false}
-            className=""
-          />
         </div>
       )}
 
-              {/* Final Result */}
-        {gameCompleted && (
-          <div className="mt-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              {isRandomGame ? 'Character' : `Today${'\u2019'}s Character`}: {todaysCharacter.name}
-            </h2>
-            <p className="text-gray-600 mb-4">
-              {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
-            </p>
-            <button
-              onClick={handleNewGame}
-              className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-            >
-              New Game
-            </button>
-          </div>
-        )}
+      {/* Final Result */}
+      {gameCompleted && (
+        <div className="mt-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            {isRandomGame ? 'Character' : `Today${'\u2019'}s Character`}: {todaysCharacter.name}
+          </h2>
+          <p className="text-gray-600 mb-4">
+            {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
+          </p>
+          <button
+            onClick={handleNewGame}
+            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+          >
+            New Game
+          </button>
+        </div>
+      )}
 
       {/* Reset Daily Game Button (only for daily game, not practice mode) */}
       {!isRandomGame && (
