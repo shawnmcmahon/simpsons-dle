@@ -13,7 +13,9 @@ npm run build
 echo "Build completed. Contents of out directory:"
 ls -la out/
 
-# Create a dummy file to satisfy Amplify's requirements
+# Create files that Amplify expects for Next.js apps
 echo "{}" > out/required-server-files.json
+echo "{}" > out/server-reference-manifest.json
+echo "{}" > out/trace
 
 echo "Build process completed successfully!" 
