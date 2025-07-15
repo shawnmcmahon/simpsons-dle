@@ -43,11 +43,13 @@ export const database = {
   // Get today's character
   async getTodaysCharacter(): Promise<SimpsonCharacter | null> {
     const today = new Date().toISOString().split('T')[0]
+    console.log('Today is:', today);
     const { data, error } = await supabase
       .from('daily_characters')
       .select(`*, simpson_characters (*)`)
       .eq('game_date', today) // just the date string, no suffix
       .single()
+    console.log('Data:', data, 'Error:', error);
     if (error) {
       console.error('Error fetching today\'s character:', error)
       return null
