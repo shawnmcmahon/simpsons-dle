@@ -116,17 +116,23 @@ export default function SimpsonsDLE() {
       if (useRandomCharacter) {
         // Get all characters
         const characters = await database.getAllCharacters();
-        // Exclude seen ones
-        const unseenCharacters = characters.filter(c => !seenPracticeIds.includes(c.id));
-        if (unseenCharacters.length === 0) {
+
+        // Exclude seen ones and the daily character
+        const filteredCharacters = characters.filter(c =>
+          !seenPracticeIds.includes(c.id) &&
+          c.id !== todaysCharacter?.id // Exclude today's character
+        );
+
+        if (filteredCharacters.length === 0) {
           resetSeenPracticeCharacters();
           setError('You have seen all characters in practice mode today!');
           setLoading(false);
           return;
         }
-        const randomIndex = Math.floor(Math.random() * unseenCharacters.length);
-        character = unseenCharacters[randomIndex];
+        const randomIndex = Math.floor(Math.random() * filteredCharacters.length);
+        character = filteredCharacters[randomIndex];
         addSeenPracticeCharacter(character.id);
+        setTodaysCharacter(character);
         setIsRandomGame(true);
       } else {
         character = await fetchTodaysCharacterDirectly();
@@ -461,7 +467,7 @@ export default function SimpsonsDLE() {
       )}
 
       {/* Reset Daily Game Button (only for daily game, not practice mode) */}
-      {!isRandomGame && (
+      {(isRandomGame || !isRandomGame) && (
         <div className="w-full flex justify-center mt-8">
           <button
             onClick={handleResetDailyGame}
