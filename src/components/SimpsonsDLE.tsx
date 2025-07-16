@@ -71,6 +71,41 @@ export default function SimpsonsDLE() {
     }
   }, [gameCompleted]);
 
+  async function fetchTodaysCharacterDirectly() {
+    // Get today's date in YYYY-MM-DD
+    const today = "2025-07-15"
+
+    // 1. Query daily_characters for today's row
+    const { data: daily, error: dailyError } = await supabase
+      .from('daily_characters')
+      .select('character_id')
+      .eq('game_date', today)
+      .single();
+
+    console.log('Daily:', daily, 'Error:', dailyError);
+
+    if (dailyError || !daily) {
+      setError('No daily character found for today');
+      setTodaysCharacter(null);
+      return;
+    }
+
+    // 2. Query simpson_characters for the character
+    const { data: character, error: charError } = await supabase
+      .from('simpson_characters')
+      .select('*')
+      .eq('id', daily.character_id)
+      .single();
+
+    if (charError || !character) {
+      setError('No character found for today');
+      setTodaysCharacter(null);
+      return;
+    }
+    console.log('Character:', character, 'Error:', charError);
+    setTodaysCharacter(character);
+  }
+
   const initializeGame = async (useRandomCharacter = false) => {
     try {
       setLoading(true)
@@ -93,16 +128,14 @@ export default function SimpsonsDLE() {
         addSeenPracticeCharacter(character.id);
         setIsRandomGame(true);
       } else {
-        // Get today's character
-        character = await database.getTodaysCharacter()
-        setIsRandomGame(false)
+        await fetchTodaysCharacterDirectly();
+        setIsRandomGame(false);
       }
       
-      if (!character) {
-        setError('No character found')
-        return
-      }
-      setTodaysCharacter(character)
+      // if (!todaysCharacter) {
+      //   setError('No character found')
+      //   return
+      // }
       
       // Get all characters for search
       const characters = await database.getAllCharacters()
@@ -133,8 +166,8 @@ export default function SimpsonsDLE() {
             const loadedAttempts: GameAttempt[] = []
             for (const attemptName of userGame.attempts) {
               const guessedCharacter = await database.getCharacterByName(attemptName)
-              if (guessedCharacter && character) {
-                const hints = database.compareHints(character, guessedCharacter)
+              if (guessedCharacter && todaysCharacter) {
+                const hints = database.compareHints(todaysCharacter, guessedCharacter)
                 loadedAttempts.push({ character: guessedCharacter, hints })
               }
             }
