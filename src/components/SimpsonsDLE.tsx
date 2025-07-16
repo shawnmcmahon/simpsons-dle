@@ -87,7 +87,7 @@ export default function SimpsonsDLE() {
     if (dailyError || !daily) {
       setError('No daily character found for today');
       setTodaysCharacter(null);
-      return;
+      return null;
     }
 
     // 2. Query simpson_characters for the character
@@ -100,10 +100,11 @@ export default function SimpsonsDLE() {
     if (charError || !character) {
       setError('No character found for today');
       setTodaysCharacter(null);
-      return;
+      return null;
     }
     console.log('Character:', character, 'Error:', charError);
     setTodaysCharacter(character);
+    return character;
   }
 
   const initializeGame = async (useRandomCharacter = false) => {
@@ -128,14 +129,14 @@ export default function SimpsonsDLE() {
         addSeenPracticeCharacter(character.id);
         setIsRandomGame(true);
       } else {
-        await fetchTodaysCharacterDirectly();
+        character = await fetchTodaysCharacterDirectly();
         setIsRandomGame(false);
       }
-      
-      // if (!todaysCharacter) {
-      //   setError('No character found')
-      //   return
-      // }
+      console.log('Todays Character:', todaysCharacter);
+      if (character === null) {
+        setError('No character found')
+        return
+      }
       
       // Get all characters for search
       const characters = await database.getAllCharacters()
