@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { database, SimpsonCharacter, HintComparison } from '@/lib/database'
 import CharacterAutocomplete from './CharacterAutocomplete'
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 interface GameAttempt {
   character: SimpsonCharacter
@@ -285,10 +288,10 @@ export default function SimpsonsDLE() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading today{'\u2019'}s character...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center p-8 bg-white/60 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600 mx-auto mb-6"></div>
+          <p className="text-lg text-slate-700 font-medium">Loading today{'\u2019'}s character...</p>
         </div>
       </div>
     )
@@ -296,10 +299,10 @@ export default function SimpsonsDLE() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-100">
-        <div className="text-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-8 py-8 bg-white/60 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-          <p className="text-gray-600">{error}</p>
+          <p className="text-lg text-slate-700">{error}</p>
         </div>
       </div>
     )
@@ -307,176 +310,187 @@ export default function SimpsonsDLE() {
 
   if (!todaysCharacter) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-100">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">No Character Found</h1>
-          <p className="text-gray-600">No character is scheduled for today.</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-8 py-8 bg-white/60 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl">
+          <h1 className="text-2xl font-bold text-slate-800 mb-4">No Character Found</h1>
+          <p className="text-lg text-slate-700">No character is scheduled for today.</p>
         </div>
       </div>
     )
   }
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-yellow-100 p-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-blue-600 mb-4">Simpson&apos;s DLE</h1>
-        <p className="text-xl text-gray-700 mb-6">Guess the Simpson{'\u2019'}s Character</p>
-        
+        return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col items-center justify-center py-8">
+      <div className="max-w-lg mx-auto px-6 w-full">
+        {/* Game Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+            Simpson&apos;s DLE
+          </h1>
+          <p className="text-lg text-slate-600 font-medium">Guess the Simpson&apos;s character in 5 tries</p>
+        </div>
+
         {/* Today's Character Image */}
-        <div className="mb-6">
-          <Image
-            src={gameCompleted ? todaysCharacter.image_url : '/images/simpsons.png'}
-            alt={gameCompleted ? `Today${'\u2019'}s Character` : "Mystery Character"}
-            width={200}
-            height={300}
-            className={`mx-auto rounded-lg shadow-lg ${gameCompleted ? 'max-w-[25vw] max-h-[25vh] w-auto h-auto' : ''}`}
-            priority
-          />
+        <div className="mb-8 text-center">
+          <div className="relative inline-block">
+            <Image
+              src={gameCompleted ? todaysCharacter.image_url : '/images/simpsons.png'}
+              alt={gameCompleted ? `Today${'\u2019'}s Character` : "Mystery Character"}
+              width={180}
+              height={240}
+              className={`mx-auto rounded-2xl shadow-2xl border-4 border-white/20 backdrop-blur-sm ${gameCompleted ? 'max-w-[180px] max-h-[240px] w-auto h-auto' : ''}`}
+              priority
+            />
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+          </div>
         </div>
 
         {/* Game Status */}
         {gameCompleted && (
-          <div className={`text-xl font-bold mb-4 ${gameWon ? 'text-green-600' : 'text-red-600'}`}>
-            {gameWon ? '🎉 Congratulations! You guessed correctly!' : '❌ Game Over! You ran out of attempts.'}
+          <div className={`text-center mb-8 p-6 rounded-2xl backdrop-blur-md border shadow-lg ${
+            gameWon 
+              ? 'bg-gradient-to-r from-green-50/80 to-emerald-50/80 text-green-800 border-green-200' 
+              : 'bg-gradient-to-r from-red-50/80 to-rose-50/80 text-red-800 border-red-200'
+          }`}>
+            <div className="font-bold text-lg">
+              {gameWon ? '🎉 Congratulations! You got it!' : '❌ Game Over! You ran out of attempts.'}
+            </div>
           </div>
         )}
 
-        {/* Original Hints */}
-        <div className="mb-8">
-          {/* Hint Labels */}
-          <div className="flex gap-4 mb-2 justify-center">
-            <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">First Season Appearance</span>
-            </div>
-            <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">First Episode Appearance</span>
-            </div>
-            <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">Occupation</span>
-            </div>
-            <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">Gender</span>
-            </div>
-            <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">Hair Color</span>
-            </div>
+        {/* Hint Labels */}
+        <div className="grid grid-cols-5 gap-2 mb-3">
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Season</span>
           </div>
-          
-          {/* Hint Boxes */}
-          <div className="flex gap-4 justify-center">
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
-              Season {todaysCharacter.first_season}
-            </div>
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center p-2">
-              {todaysCharacter.first_episode}
-            </div>
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
-              {todaysCharacter.occupation}
-            </div>
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
-              {todaysCharacter.gender}
-            </div>
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
-              {todaysCharacter.hair_color}
-            </div>
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Episode</span>
+          </div>
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Job</span>
+          </div>
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Gender</span>
+          </div>
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Hair</span>
           </div>
         </div>
-      </div>
+        
+        {/* Original Hints */}
+        <div className="grid grid-cols-5 gap-2 mb-8">
+          <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
+            {todaysCharacter.first_season}
+          </div>
+          <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
+            {todaysCharacter.first_episode}
+          </div>
+          <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
+            {todaysCharacter.occupation}
+          </div>
+          <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
+            {todaysCharacter.gender}
+          </div>
+          <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
+            {todaysCharacter.hair_color}
+          </div>
+        </div>
 
-      {/* Attempt Results */}
-      {attempts.map((attempt, index) => (
-        <div key={index} className="mb-4">
-          <div className="flex gap-4 justify-center">
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.season)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
-              Season {attempt.character.first_season}
+        {/* Attempt Results */}
+        {attempts.map((attempt, index) => (
+          <div key={index} className="grid grid-cols-5 gap-2 mb-3">
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.season)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
+              {attempt.character.first_season}
             </div>
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.episode)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center shadow-lg p-2`}>
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.episode)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
               {attempt.character.first_episode}
             </div>
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.occupation)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.occupation)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
               {attempt.character.occupation}
             </div>
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.gender)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.gender)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
               {attempt.character.gender}
             </div>
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.hairColor)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.hairColor)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
               {attempt.character.hair_color}
             </div>
           </div>
-        </div>
-      ))}
+        ))}
 
-      {/* Color Key */}
-      <div className="mb-6 text-center">
-        <div className="flex gap-4 justify-center items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span className="text-sm font-semibold text-gray-700">Green = Correct</span>
+        {/* Empty rows for remaining guesses */}
+        {Array.from({ length: 5 - attempts.length }, (_, index) => (
+          <div key={`empty-${index}`} className="grid grid-cols-5 gap-2 mb-3">
+            {Array.from({ length: 5 }, (_, colIndex) => (
+              <div key={colIndex} className="w-14 h-14 border-2 border-slate-200/60 rounded-xl bg-white/40 backdrop-blur-sm shadow-inner"></div>
+            ))}
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-red-500 rounded"></div>
-            <span className="text-sm font-semibold text-gray-700">Red = Incorrect</span>
+        ))}
+
+        {/* Color Key */}
+        <div className="text-center mt-8 mb-6">
+          <div className="inline-flex items-center gap-6 px-6 py-3 bg-white/60 backdrop-blur-md rounded-2xl border border-white/20 shadow-lg">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-gradient-to-br from-green-400 to-green-600 rounded-full shadow-sm"></div>
+              <span className="text-slate-700 font-medium text-sm">Correct</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-gradient-to-br from-red-400 to-red-600 rounded-full shadow-sm"></div>
+              <span className="text-slate-700 font-medium text-sm">Wrong</span>
+            </div>
           </div>
         </div>
+
+        {/* Input Boxes */}
+        {!gameCompleted && (
+          <div className="space-y-3 w-full max-w-sm mx-auto">
+            {guessInputs.map((input, idx) => (
+              <CharacterAutocomplete
+                key={idx}
+                value={input.value}
+                onChange={val => {
+                  if (!input.disabled) {
+                    setGuessInputs(inputs =>
+                      inputs.map((g, i) => i === idx ? { ...g, value: val } : g)
+                    );
+                  }
+                }}
+                onSelect={handleCharacterSelect}
+                characters={allCharacters}
+                placeholder="Enter character name..."
+                disabled={input.disabled}
+                className="w-full"
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Final Result */}
+        {gameCompleted && (
+          <div className="text-center mt-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              {isRandomGame ? 'Character' : `Today${'\u2019'}s Character`}: {todaysCharacter.name}
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
+            </p>
+            <div className="space-y-2 max-w-sm mx-auto">
+              <Button
+                onClick={handleNewGame}
+                className="w-full"
+              >
+                New Game
+              </Button>
+              <Button
+                onClick={handleResetDailyGame}
+                variant="outline"
+                className="w-full"
+              >
+                Reset Daily Game
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Input Boxes */}
-      {!gameCompleted && (
-        <div className="flex flex-col gap-4 w-full max-w-md">
-          {guessInputs.map((input, idx) => (
-            <CharacterAutocomplete
-              key={idx}
-              value={input.value}
-              onChange={val => {
-                if (!input.disabled) {
-                  setGuessInputs(inputs =>
-                    inputs.map((g, i) => i === idx ? { ...g, value: val } : g)
-                  );
-                }
-              }}
-              onSelect={handleCharacterSelect}
-              characters={allCharacters}
-              placeholder=""
-              disabled={input.disabled}
-              className=""
-            />
-          ))}
-          {/* Guess Counter */}
-          <div className="text-center text-gray-700 mt-2 font-semibold">
-            Guess {guessInputs.length} of 5
-          </div>
-        </div>
-      )}
-
-      {/* Final Result */}
-      {gameCompleted && (
-        <div className="mt-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            {isRandomGame ? 'Character' : `Today${'\u2019'}s Character`}: {todaysCharacter.name}
-          </h2>
-          <p className="text-gray-600 mb-4">
-            {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
-          </p>
-          <button
-            onClick={handleNewGame}
-            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-          >
-            New Game
-          </button>
-        </div>
-      )}
-
-      {/* Reset Daily Game Button (only for daily game, not practice mode) */}
-      {(isRandomGame || !isRandomGame) && (
-        <div className="w-full flex justify-center mt-8">
-          <button
-            onClick={handleResetDailyGame}
-            className="px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
-          >
-            Reset Daily Game
-          </button>
-        </div>
-      )}
     </div>
   )
 } 

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { SimpsonCharacter } from '@/lib/database'
+import { Input } from '@/components/ui/input'
 
 interface CharacterAutocompleteProps {
   value: string
@@ -80,7 +81,7 @@ export default function CharacterAutocomplete({
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <input
+      <Input
         ref={inputRef}
         type="text"
         value={value}
@@ -94,9 +95,7 @@ export default function CharacterAutocomplete({
         }}
         placeholder={placeholder}
         disabled={disabled}
-        className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black font-semibold ${
-          disabled ? 'bg-gray-200 cursor-not-allowed text-gray-800' : ''
-        } ${className}`}
+        className={`font-semibold ${disabled ? 'cursor-not-allowed' : ''} ${className}`}
       />
       
       {/* Dropdown */}
