@@ -325,10 +325,10 @@ export default function SimpsonsDLE() {
         {/* Today's Character Image */}
         <div className="mb-6">
           <Image
-            src={gameCompleted ? todaysCharacter.image_url : "https://static.simpsonswiki.com/images/b/b1/AllSimpsonsCharacters.png"}
+            src={gameCompleted ? todaysCharacter.image_url : '/images/simpsons.png'}
             alt={gameCompleted ? `Today${'\u2019'}s Character` : "Mystery Character"}
-            width={600}
-            height={800}
+            width={200}
+            height={300}
             className={`mx-auto rounded-lg shadow-lg ${gameCompleted ? 'max-w-[25vw] max-h-[25vh] w-auto h-auto' : ''}`}
             priority
           />
