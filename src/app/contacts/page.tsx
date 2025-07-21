@@ -8,7 +8,7 @@ export default function ContactsPage() {
           <section className="bg-gray-50 rounded-lg p-6">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">Get in Touch</h2>
             <p className="text-gray-700 leading-relaxed mb-6">
-              Have a question, suggestion, or found a bug? We'd love to hear from you! 
+              Have a question, suggestion, or found a bug? We&apos;d love to hear from you! 
               Choose the best way to reach out based on your needs.
             </p>
             
@@ -62,7 +62,7 @@ export default function ContactsPage() {
               
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">Q: Is there a mobile app?</h3>
-                <p className="text-gray-700">A: Currently, Simpson's DLE is a web-based game that works great on mobile browsers. A dedicated app may come in the future!</p>
+                <p className="text-gray-700">A: Currently, Simpson&apos;s DLE is a web-based game that works great on mobile browsers. A dedicated app may come in the future!</p>
               </div>
               
               <div>
@@ -76,8 +76,8 @@ export default function ContactsPage() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">Response Times</h2>
             <p className="text-gray-700 leading-relaxed">
               We typically respond to emails within 24-48 hours during weekdays. Bug reports are prioritized 
-              and may receive faster responses. Please be patient as we're a small team working to make 
-              Simpson's DLE the best it can be!
+              and may receive faster responses. Please be patient as we&apos;re a small team working to make 
+              Simpson&apos;s DLE the best it can be!
             </p>
           </section>
         </div>

@@ -52,7 +52,7 @@ export default function Header() {
           </nav>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900"
@@ -74,9 +74,6 @@ export default function Header() {
               </Link>
               <Link href="/unlimited" className="block px-3 py-2 text-gray-700 hover:text-gray-900 font-medium">
                 Unlimited
-              </Link>
-              <Link href="/games" className="block px-3 py-2 text-gray-700 hover:text-gray-900 font-medium">
-                Games
               </Link>
               <Link href="/statistics" className="block px-3 py-2 text-gray-700 hover:text-gray-900 font-medium">
                 Statistics

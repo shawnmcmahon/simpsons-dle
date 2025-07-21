@@ -6,10 +6,10 @@ export default function AboutPage() {
         
         <div className="space-y-8">
           <section className="bg-gray-50 rounded-lg p-6">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">What is Simpson's DLE?</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">What is Simpson&apos;s DLE?</h2>
             <p className="text-gray-700 leading-relaxed">
-              Simpson's DLE is a daily guessing game inspired by Wordle and other word games, but focused on the 
-              beloved characters from The Simpsons TV show. Each day, players try to guess a different Simpson's 
+              Simpson&apos;s DLE is a daily guessing game inspired by Wordle and other word games, but focused on the 
+              beloved characters from The Simpsons TV show. Each day, players try to guess a different Simpson&apos;s 
               character using various clues about their first appearance, occupation, gender, and other characteristics.
             </p>
           </section>
@@ -18,8 +18,8 @@ export default function AboutPage() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">How It Works</h2>
             <div className="space-y-4 text-gray-700">
               <p>
-                Every day at midnight, a new Simpson's character is selected as the target. Players have 5 attempts 
-                to guess the correct character. With each guess, you'll receive feedback in the form of colored squares:
+                Every day at midnight, a new Simpson&apos;s character is selected as the target. Players have 5 attempts 
+                to guess the correct character. With each guess, you&apos;ll receive feedback in the form of colored squares:
               </p>
               <ul className="space-y-2 ml-4">
                 <li className="flex items-center">
@@ -40,15 +40,15 @@ export default function AboutPage() {
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Daily Challenge</h3>
                 <p className="text-gray-700">
-                  Play the official daily Simpson's DLE with a new character each day. 
+                  Play the official daily Simpson&apos;s DLE with a new character each day. 
                   Compare your results with friends and other players worldwide.
                 </p>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Unlimited Mode</h3>
                 <p className="text-gray-700">
-                  Can't wait for tomorrow? Play unlimited rounds with random characters 
-                  and practice your Simpson's knowledge anytime.
+                  Can&apos;t wait for tomorrow? Play unlimited rounds with random characters 
+                  and practice your Simpson&apos;s knowledge anytime.
                 </p>
               </div>
             </div>
@@ -57,7 +57,7 @@ export default function AboutPage() {
           <section className="bg-gray-50 rounded-lg p-6">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">Privacy & Data</h2>
             <p className="text-gray-700 leading-relaxed">
-              Simpson's DLE stores your game statistics locally in your browser. We don't collect personal 
+              Simpson&apos;s DLE stores your game statistics locally in your browser. We don&apos;t collect personal 
               information or track your gameplay across devices. Your statistics and progress are private 
               and remain on your device.
             </p>
@@ -66,7 +66,7 @@ export default function AboutPage() {
           <section className="bg-blue-50 rounded-lg p-6">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">Credits</h2>
             <p className="text-gray-700 leading-relaxed">
-              Simpson's DLE is inspired by Wordle and other daily puzzle games. The Simpsons is created by 
+              Simpson&apos;s DLE is inspired by Wordle and other daily puzzle games. The Simpsons is created by 
               Matt Groening and owned by Fox Broadcasting Company. This game is a fan project and is not 
               affiliated with or endorsed by Fox or the creators of The Simpsons.
             </p>
