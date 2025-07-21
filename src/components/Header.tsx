@@ -3,14 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "@/components/ui/menubar"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -30,53 +22,26 @@ export default function Header() {
                   className="h-8 w-auto"
                   priority
                 />
-                                 <div className="lg:flex flex flex-grow items-center hidden ml-6">
-                   <Menubar className="bg-transparent border-none">
-                     <MenubarMenu>
-                       <MenubarTrigger className="font-medium text-gray-700 hover:text-gray-900">
-                         <Link href="/">Home</Link>
-                       </MenubarTrigger>
-                     </MenubarMenu>
-                     
-                     <MenubarMenu>
-                       <MenubarTrigger className="font-medium text-gray-700 hover:text-gray-900">
-                         Games
-                       </MenubarTrigger>
-                       <MenubarContent>
-                         <MenubarItem>
-                           <Link href="/unlimited">Unlimited Mode</Link>
-                         </MenubarItem>
-                         <MenubarItem>
-                           <Link href="/games">All Games</Link>
-                         </MenubarItem>
-                       </MenubarContent>
-                     </MenubarMenu>
-                     
-                     <MenubarMenu>
-                       <MenubarTrigger className="font-medium text-gray-700 hover:text-gray-900">
-                         <Link href="/statistics">Statistics</Link>
-                       </MenubarTrigger>
-                     </MenubarMenu>
-                     
-                     <MenubarMenu>
-                       <MenubarTrigger className="font-medium text-gray-700 hover:text-gray-900">
-                         Help
-                       </MenubarTrigger>
-                       <MenubarContent>
-                         <MenubarItem>
-                           <Link href="/guides">How to Play</Link>
-                         </MenubarItem>
-                         <MenubarItem>
-                           <Link href="/about">About</Link>
-                         </MenubarItem>
-                         <MenubarItem>
-                           <Link href="/contacts">Contact Us</Link>
-                         </MenubarItem>
-                       </MenubarContent>
-                     </MenubarMenu>
-                   </Menubar>
-                 </div>
               <span className="text-lg font-bold text-gray-900">DLE</span>
+                  <div className="lg:flex flex flex-grow items-center hidden ml-6">
+                   <nav className="flex items-center space-x-6">
+                     <Link href="/" className="font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                       Home
+                     </Link>
+                     <Link href="/unlimited" className="font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                       Unlimited
+                     </Link>
+                     <Link href="/statistics" className="font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                       Statistics
+                     </Link>
+                     <Link href="/about" className="font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                       About
+                     </Link>
+                     <Link href="/contacts" className="font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                       Contact
+                     </Link>
+                   </nav>
+                 </div>
               </div>
                 
 
@@ -112,9 +77,6 @@ export default function Header() {
               </Link>
               <Link href="/games" className="block px-3 py-2 text-gray-700 hover:text-gray-900 font-medium">
                 Games
-              </Link>
-              <Link href="/guides" className="block px-3 py-2 text-gray-700 hover:text-gray-900 font-medium">
-                Guides
               </Link>
               <Link href="/statistics" className="block px-3 py-2 text-gray-700 hover:text-gray-900 font-medium">
                 Statistics
