@@ -276,6 +276,7 @@ export default function SimpsonsDLE() {
   }
 
   if (!todaysCharacter) {
+    return (
       <div className="min-h-screen flex items-center justify-center" style={{background: 'radial-gradient(circle, rgba(57, 59, 116, 1) 0%, rgba(26, 0, 71, 1) 100%)'}}>
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">No Character Found</h1>
