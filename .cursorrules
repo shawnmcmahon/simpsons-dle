@@ -1,0 +1,31 @@
+# Project Coding Rules for Cursor AI
+
+## General
+- Write clear, concise, and maintainable code
+- Always include descriptive comments for non-obvious logic
+- Follow consistent naming conventions (camelCase for variables, PascalCase for classes/types)
+
+## Language / Framework
+- Use TypeScript instead of JavaScript
+- Use ES modules (import/export) over require
+- Prefer async/await over raw Promise chains
+
+## React (if applicable)
+- Use functional components with hooks
+- Separate UI (presentational) and business logic into different components
+- Keep components small and reusable
+
+## Style
+- Format code according to Prettier defaults
+- Limit line length to ~100 characters
+- Use consistent spacing and indentation (2 spaces)
+
+## Testing
+- Write unit tests for core logic functions
+- Use descriptive test names
+- Ensure tests run in isolation
+
+## Do Not Do's 
+- Do not run dev commands. Tell me when a dev command needs to be run and I will run it. 
+
+# End of rules
