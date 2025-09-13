@@ -404,6 +404,7 @@ export default function SimpsonsDLE() {
             <span className="text-sm font-semibold text-white">Red = Incorrect</span>
           </div>
         </div>
+      </div>
 
       {/* Input Boxes */}
       {!gameCompleted && (
