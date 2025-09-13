@@ -325,7 +325,7 @@ export default function SimpsonsDLE() {
         {/* Today's Character Image */}
         <div className="mb-6">
           <Image
-            src={gameCompleted ? todaysCharacter.image_url : "https://static.simpsonswiki.com/images/b/b1/AllSimpsonsCharacters.png"}
+            src={gameCompleted ? todaysCharacter.image_url : "/the-simpsons.png"}
             alt={gameCompleted ? `Today${'\u2019'}s Character` : "Mystery Character"}
             width={600}
             height={800}

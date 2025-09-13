@@ -57,6 +57,7 @@ export const database = {
     return data?.simpson_characters || null
   },
 
+
   // Get a character by name
   async getCharacterByName(name: string): Promise<SimpsonCharacter | null> {
     const { data, error } = await supabase
