@@ -242,11 +242,10 @@ export default function SimpsonsDLE() {
     }
   };
 
-  const getHintColor = (status: 'correct' | 'incorrect' | 'partial') => {
+  const getHintColor = (status: 'correct' | 'incorrect') => {
     switch (status) {
       case 'correct': return 'bg-green-500'
       case 'incorrect': return 'bg-red-500'
-      case 'partial': return 'bg-yellow-500'
       default: return 'bg-gray-300'
     }
   }
@@ -295,11 +294,11 @@ export default function SimpsonsDLE() {
         {/* Today's Character Image */}
         <div className="mb-6">
           <Image
-            src={gameCompleted ? todaysCharacter.image_url : "/simpsons-couch.avif"}
-            alt={gameCompleted ? `Today${'\u2019'}s Character` : "Mystery Character"}
+            src="/simpsons-couch.avif"
+            alt="Mystery Character"
             width={600}
             height={800}
-            className={`mx-auto rounded-lg shadow-lg ${gameCompleted ? 'max-w-[25vw] max-h-[25vh] w-auto h-auto' : ''}`}
+            className="mx-auto rounded-lg shadow-lg"
             priority
           />
         </div>
@@ -311,29 +310,10 @@ export default function SimpsonsDLE() {
           </div>
         )}
 
-        {/* Hint Labels */}
-        <div className="grid grid-cols-5 gap-2 mb-3">
-          <div className="text-center">
-            <span className="text-sm font-semibold text-slate-700">Season</span>
-          </div>
-          <div className="text-center">
-            <span className="text-sm font-semibold text-slate-700">Episode</span>
-          </div>
-          <div className="text-center">
-            <span className="text-sm font-semibold text-slate-700">Job</span>
-          </div>
-          <div className="text-center">
-            <span className="text-sm font-semibold text-slate-700">Gender</span>
-          </div>
-          <div className="text-center">
-            <span className="text-sm font-semibold text-slate-700">Hair</span>
-          </div>
-        </div>
-        
-        {/* Original Hints */}
+        {/* Hint Labels and Values */}
         <div className="mb-8">
           {/* Hint Labels */}
-          <div className="flex gap-4 mb-2 justify-center">
+          <div className="flex gap-6 mb-2 justify-center">
             <div className="w-20 text-center">
               <span className="text-sm font-bold text-white">First Season Appearance</span>
             </div>
@@ -351,42 +331,62 @@ export default function SimpsonsDLE() {
             </div>
           </div>
           {/* Hint Values */}
-          <div className="flex gap-4 justify-center">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
-              {todaysCharacter.first_season}
+          <div className="flex gap-6 justify-center">
+            <div className="w-20 flex justify-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm p-1 text-center leading-tight">
+                {todaysCharacter.first_season}
+              </div>
             </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
-              {todaysCharacter.first_episode}
+            <div className="w-20 flex justify-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm p-1 text-center leading-tight">
+                {todaysCharacter.first_episode}
+              </div>
             </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
-              {todaysCharacter.occupation}
+            <div className="w-20 flex justify-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm p-1 text-center leading-tight">
+                {todaysCharacter.occupation}
+              </div>
             </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
-              {todaysCharacter.gender}
+            <div className="w-20 flex justify-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm p-1 text-center leading-tight">
+                {todaysCharacter.gender}
+              </div>
             </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
-              {todaysCharacter.hair_color}
+            <div className="w-20 flex justify-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm p-1 text-center leading-tight">
+                {todaysCharacter.hair_color}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Attempt Results */}
         {attempts.map((attempt, index) => (
-          <div key={index} className="grid grid-cols-5 gap-2 mb-3">
-            <div className={`w-14 h-14 ${getHintColor(attempt.hints.season)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
-              {attempt.character.first_season}
+          <div key={index} className="flex gap-6 justify-center mb-3">
+            <div className="w-20 flex justify-center">
+              <div className={`w-16 h-16 ${getHintColor(attempt.hints.season)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 p-1 text-center leading-tight`}>
+                {attempt.character.first_season}
+              </div>
             </div>
-            <div className={`w-14 h-14 ${getHintColor(attempt.hints.episode)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
-              {attempt.character.first_episode}
+            <div className="w-20 flex justify-center">
+              <div className={`w-16 h-16 ${getHintColor(attempt.hints.episode)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 p-1 text-center leading-tight`}>
+                {attempt.character.first_episode}
+              </div>
             </div>
-            <div className={`w-14 h-14 ${getHintColor(attempt.hints.occupation)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
-              {attempt.character.occupation}
+            <div className="w-20 flex justify-center">
+              <div className={`w-16 h-16 ${getHintColor(attempt.hints.occupation)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 p-1 text-center leading-tight`}>
+                {attempt.character.occupation}
+              </div>
             </div>
-            <div className={`w-14 h-14 ${getHintColor(attempt.hints.gender)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
-              {attempt.character.gender}
+            <div className="w-20 flex justify-center">
+              <div className={`w-16 h-16 ${getHintColor(attempt.hints.gender)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 p-1 text-center leading-tight`}>
+                {attempt.character.gender}
+              </div>
             </div>
-            <div className={`w-14 h-14 ${getHintColor(attempt.hints.hairColor)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
-              {attempt.character.hair_color}
+            <div className="w-20 flex justify-center">
+              <div className={`w-16 h-16 ${getHintColor(attempt.hints.hairColor)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 p-1 text-center leading-tight`}>
+                {attempt.character.hair_color}
+              </div>
             </div>
           </div>
         ))}
@@ -398,10 +398,6 @@ export default function SimpsonsDLE() {
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-green-500 rounded"></div>
             <span className="text-sm font-semibold text-white">Green = Correct</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-            <span className="text-sm font-semibold text-white">Yellow = Partial</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-red-500 rounded"></div>
