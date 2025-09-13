@@ -48,7 +48,7 @@ export default function StatisticsPage() {
         <div className="mt-8 bg-blue-50 rounded-lg p-6">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">How Statistics Work</h2>
           <div className="space-y-3 text-gray-700">
-            <p><strong>Games Played:</strong> Total number of Simpson's DLE games you've completed</p>
+            <p><strong>Games Played:</strong> Total number of Simpson&apos;s DLE games you&apos;ve completed</p>
             <p><strong>Win Percentage:</strong> Percentage of games won out of total games played</p>
             <p><strong>Current Streak:</strong> Number of consecutive games won</p>
             <p><strong>Max Streak:</strong> Your longest streak of consecutive wins</p>

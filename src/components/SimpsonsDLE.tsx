@@ -5,9 +5,6 @@ import Image from 'next/image'
 import { database, SimpsonCharacter, HintComparison } from '@/lib/database'
 import CharacterAutocomplete from './CharacterAutocomplete'
 import { supabase } from '../lib/supabase'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 
 interface GameAttempt {
   character: SimpsonCharacter
