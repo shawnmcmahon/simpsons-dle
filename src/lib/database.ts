@@ -31,11 +31,11 @@ export interface UserGame {
 }
 
 export interface HintComparison {
-  season: 'correct' | 'incorrect' | 'partial'
-  occupation: 'correct' | 'incorrect' | 'partial'
-  episode: 'correct' | 'incorrect' | 'partial'
-  gender: 'correct' | 'incorrect' | 'partial'
-  hairColor: 'correct' | 'incorrect' | 'partial'
+  season: 'correct' | 'incorrect'
+  occupation: 'correct' | 'incorrect'
+  episode: 'correct' | 'incorrect'
+  gender: 'correct' | 'incorrect'
+  hairColor: 'correct' | 'incorrect'
 }
 
 // Helper function to get today's day of the year (1-365)

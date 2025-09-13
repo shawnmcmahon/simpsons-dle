@@ -82,7 +82,7 @@ export default function Progress() {
         </div>
         
         <div className="grid grid-cols-10 gap-1">
-          {calendarDays.map((day, index) => (
+          {calendarDays.map((day) => (
             <div
               key={day.date}
               className={`

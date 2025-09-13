@@ -108,7 +108,7 @@ export default function CharacterAutocomplete({
               key={character.id}
               type="button"
               onClick={() => handleSelect(character)}
-              className={`w-full px-4 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none font-semibold text-white ${
+              className={`w-full px-4 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none font-semibold text-gray-800 ${
                 index === 0 ? 'rounded-t-lg' : ''
               } ${
                 index === filteredCharacters.length - 1 ? 'rounded-b-lg' : ''

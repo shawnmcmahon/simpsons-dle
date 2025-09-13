@@ -2,7 +2,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto pt-8 px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">About Simpson's DLE</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">About Simpson&apos;s DLE</h1>
         
         <div className="space-y-8">
           <section className="bg-gray-50 rounded-lg p-6">
@@ -28,7 +28,7 @@ export default function AboutPage() {
                 </li>
                 <li className="flex items-center">
                   <div className="w-4 h-4 bg-red-500 rounded mr-3"></div>
-                  <span>Red means your guess doesn't match the target character for that category</span>
+                  <span>Red means your guess doesn&apos;t match the target character for that category</span>
                 </li>
               </ul>
             </div>
