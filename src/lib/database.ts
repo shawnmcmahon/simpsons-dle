@@ -38,45 +38,53 @@ export interface HintComparison {
   hairColor: 'correct' | 'incorrect' | 'partial'
 }
 
-// Helper function to get today's date in YYYY-MM-DD format
-function getTodayDateString(): string {
+// Helper function to get today's day of the year (1-365)
+function getTodayDayOfYear(): number {
   const now = new Date()
-  return now.toISOString().split('T')[0]
+  const start = new Date(now.getFullYear(), 0, 0)
+  const diff = now.getTime() - start.getTime()
+  const oneDay = 1000 * 60 * 60 * 24
+  const dayOfYear = Math.floor(diff / oneDay)
+  
+  // Handle leap years - if it's after Feb 28 and it's a leap year, adjust
+  const isLeapYear = (year: number) => (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)
+  if (isLeapYear(now.getFullYear()) && now.getMonth() > 1) {
+    return Math.min(dayOfYear, 365) // Cap at 365 for consistency
+  }
+  
+  return Math.min(dayOfYear, 365) // Cap at 365 for non-leap years
 }
 
 // Database functions
 export const database = {
   // Get today's character
   async getTodaysCharacter(): Promise<SimpsonCharacter | null> {
-    const todayDate = getTodayDateString()
-    console.log('Today\'s date:', todayDate);
+    const dayOfYear = getTodayDayOfYear()
+    console.log('Today\'s day of year:', dayOfYear);
     
-    // First get the daily character record - use limit(1) instead of single() to handle multiple records
+    // Get the daily character record by ID (which corresponds to day of year)
     const { data: dailyData, error: dailyError } = await supabase
       .from('daily_characters')
       .select('character_id')
-      .eq('game_date', todayDate)
-      .limit(1)
+      .eq('id', dayOfYear)
+      .single()
     
     console.log('Daily data:', dailyData, 'Error:', dailyError);
-    if (dailyError || !dailyData || dailyData.length === 0) {
+    if (dailyError || !dailyData) {
       console.error('Error fetching daily character:', dailyError)
       return null
     }
-    
-    // Get the first (and should be only) record
-    const dailyRecord = dailyData[0]
     
     // Then get the Simpson character details
     const { data: characterData, error: characterError } = await supabase
       .from('simpson_characters')
       .select('*')
-      .eq('id', dailyRecord.character_id)
+      .eq('id', dailyData.character_id)
       .single()
     
     console.log('Character data:', characterData, 'Error:', characterError);
     if (characterError || !characterData) {
-      console.error('Error fetching Simpson character for character_id:', dailyRecord.character_id, 'Error:', characterError)
+      console.error('Error fetching Simpson character for character_id:', dailyData.character_id, 'Error:', characterError)
       
       // Fallback: Try to get any character if the specific one doesn't exist
       console.log('Attempting fallback to get any available character...')
@@ -144,21 +152,19 @@ export const database = {
 
   // Get or create user game for today
   async getUserGame(userId?: string): Promise<UserGame | null> {
-    const todayDate = getTodayDateString()
+    const dayOfYear = getTodayDayOfYear()
     
-    // First, get today's daily character
-    const { data: dailyCharData, error: dailyError } = await supabase
+    // First, get today's daily character by ID
+    const { data: dailyChar, error: dailyError } = await supabase
       .from('daily_characters')
       .select('*')
-      .eq('game_date', todayDate)
-      .limit(1)
+      .eq('id', dayOfYear)
+      .single()
     
-    if (dailyError || !dailyCharData || dailyCharData.length === 0) {
+    if (dailyError || !dailyChar) {
       console.error('Error fetching daily character:', dailyError)
       return null
     }
-    
-    const dailyChar = dailyCharData[0]
 
     // Check if user already has a game for today
     let query = supabase
@@ -294,19 +300,17 @@ export const database = {
 
   // Check if user has already played today
   async hasPlayedToday(userId?: string): Promise<boolean> {
-    const todayDate = getTodayDateString()
+    const dayOfYear = getTodayDayOfYear()
     
-    const { data: dailyCharData, error: dailyError } = await supabase
+    const { data: dailyChar, error: dailyError } = await supabase
       .from('daily_characters')
       .select('id')
-      .eq('game_date', todayDate)
-      .limit(1)
+      .eq('id', dayOfYear)
+      .single()
     
-    if (dailyError || !dailyCharData || dailyCharData.length === 0) {
+    if (dailyError || !dailyChar) {
       return false
     }
-    
-    const dailyChar = dailyCharData[0]
 
     let query = supabase
       .from('user_games')
