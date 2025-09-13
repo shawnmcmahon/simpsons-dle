@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { database, SimpsonCharacter, HintComparison } from '@/lib/database'
 import CharacterAutocomplete from './CharacterAutocomplete'
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 interface GameAttempt {
   character: SimpsonCharacter
@@ -63,7 +66,7 @@ export default function SimpsonsDLE() {
 
   useEffect(() => {
     initializeGame()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!gameCompleted) {
@@ -308,6 +311,25 @@ export default function SimpsonsDLE() {
           </div>
         )}
 
+        {/* Hint Labels */}
+        <div className="grid grid-cols-5 gap-2 mb-3">
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Season</span>
+          </div>
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Episode</span>
+          </div>
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Job</span>
+          </div>
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Gender</span>
+          </div>
+          <div className="text-center">
+            <span className="text-sm font-semibold text-slate-700">Hair</span>
+          </div>
+        </div>
+        
         {/* Original Hints */}
         <div className="mb-8">
           {/* Hint Labels */}
@@ -328,50 +350,47 @@ export default function SimpsonsDLE() {
               <span className="text-sm font-bold text-white">Hair Color</span>
             </div>
           </div>
-          
-          {/* Hint Boxes */}
+          {/* Hint Values */}
           <div className="flex gap-4 justify-center">
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
-              Season {todaysCharacter.first_season}
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
+              {todaysCharacter.first_season}
             </div>
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center p-2">
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
               {todaysCharacter.first_episode}
             </div>
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
               {todaysCharacter.occupation}
             </div>
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
               {todaysCharacter.gender}
             </div>
-            <div className="w-20 h-20 bg-blue-500 border-2 border-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center p-2">
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 border border-blue-400/30 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm">
               {todaysCharacter.hair_color}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Attempt Results */}
-      {attempts.map((attempt, index) => (
-        <div key={index} className="mb-4">
-          <div className="flex gap-4 justify-center">
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.season)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
-              Season {attempt.character.first_season}
+        {/* Attempt Results */}
+        {attempts.map((attempt, index) => (
+          <div key={index} className="grid grid-cols-5 gap-2 mb-3">
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.season)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
+              {attempt.character.first_season}
             </div>
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.episode)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-xs text-center shadow-lg p-2`}>
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.episode)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
               {attempt.character.first_episode}
             </div>
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.occupation)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.occupation)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
               {attempt.character.occupation}
             </div>
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.gender)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.gender)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
               {attempt.character.gender}
             </div>
-            <div className={`w-20 h-20 ${getHintColor(attempt.hints.hairColor)} border-2 border-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-sm text-center shadow-lg p-2`}>
+            <div className={`w-14 h-14 ${getHintColor(attempt.hints.hairColor)} border border-white/20 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105`}>
               {attempt.character.hair_color}
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {/* Color Key */}
       <div className="mb-6 text-center">
@@ -379,6 +398,10 @@ export default function SimpsonsDLE() {
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-green-500 rounded"></div>
             <span className="text-sm font-semibold text-white">Green = Correct</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+            <span className="text-sm font-semibold text-white">Yellow = Partial</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-red-500 rounded"></div>
