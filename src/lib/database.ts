@@ -15,9 +15,9 @@ export interface SimpsonCharacter {
 
 export interface DailyCharacter {
   id: number
+  name: string
   character_id: number
   game_date: string
-  created_at: string
 }
 
 export interface UserGame {
@@ -38,24 +38,66 @@ export interface HintComparison {
   hairColor: 'correct' | 'incorrect' | 'partial'
 }
 
+// Helper function to get today's date in YYYY-MM-DD format
+function getTodayDateString(): string {
+  const now = new Date()
+  return now.toISOString().split('T')[0]
+}
+
 // Database functions
 export const database = {
   // Get today's character
   async getTodaysCharacter(): Promise<SimpsonCharacter | null> {
-    const today = new Date().toISOString().split('T')[0]
-    console.log('Today is:', today);
-    const { data, error } = await supabase
+    const todayDate = getTodayDateString()
+    console.log('Today\'s date:', todayDate);
+    
+    // First get the daily character record - use limit(1) instead of single() to handle multiple records
+    const { data: dailyData, error: dailyError } = await supabase
       .from('daily_characters')
-      .select(`*, simpson_characters (*)`)
-      .eq('game_date', today) // just the date string, no suffix
-      .single()
-    console.log('Data:', data, 'Error:', error);
-    if (error) {
-      console.error('Error fetching today\'s character:', error)
+      .select('character_id')
+      .eq('game_date', todayDate)
+      .limit(1)
+    
+    console.log('Daily data:', dailyData, 'Error:', dailyError);
+    if (dailyError || !dailyData || dailyData.length === 0) {
+      console.error('Error fetching daily character:', dailyError)
       return null
     }
-    return data?.simpson_characters || null
+    
+    // Get the first (and should be only) record
+    const dailyRecord = dailyData[0]
+    
+    // Then get the Simpson character details
+    const { data: characterData, error: characterError } = await supabase
+      .from('simpson_characters')
+      .select('*')
+      .eq('id', dailyRecord.character_id)
+      .single()
+    
+    console.log('Character data:', characterData, 'Error:', characterError);
+    if (characterError || !characterData) {
+      console.error('Error fetching Simpson character for character_id:', dailyRecord.character_id, 'Error:', characterError)
+      
+      // Fallback: Try to get any character if the specific one doesn't exist
+      console.log('Attempting fallback to get any available character...')
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('simpson_characters')
+        .select('*')
+        .limit(1)
+        .single()
+      
+      if (fallbackError || !fallbackData) {
+        console.error('Fallback also failed:', fallbackError)
+        return null
+      }
+      
+      console.log('Using fallback character:', fallbackData)
+      return fallbackData
+    }
+    
+    return characterData
   },
+  
 
 
   // Get a character by name
@@ -102,19 +144,21 @@ export const database = {
 
   // Get or create user game for today
   async getUserGame(userId?: string): Promise<UserGame | null> {
-    const today = new Date().toISOString().split('T')[0]
+    const todayDate = getTodayDateString()
     
     // First, get today's daily character
-    const { data: dailyChar, error: dailyError } = await supabase
+    const { data: dailyCharData, error: dailyError } = await supabase
       .from('daily_characters')
       .select('*')
-      .eq('game_date', today)
-      .single()
+      .eq('game_date', todayDate)
+      .limit(1)
     
-    if (dailyError || !dailyChar) {
+    if (dailyError || !dailyCharData || dailyCharData.length === 0) {
       console.error('Error fetching daily character:', dailyError)
       return null
     }
+    
+    const dailyChar = dailyCharData[0]
 
     // Check if user already has a game for today
     let query = supabase
@@ -128,7 +172,12 @@ export const database = {
       query = query.is('user_id', null)
     }
     
-    const { data: existingGame } = await query.single()
+    const { data: existingGame, error: queryError } = await query.single()
+    
+    if (queryError && queryError.code !== 'PGRST116') { // PGRST116 is "not found" error
+      console.error('Error checking for existing game:', queryError)
+      return null
+    }
     
     if (existingGame) {
       return existingGame
@@ -198,7 +247,6 @@ export const database = {
       .select(`
         *,
         daily_characters (
-          game_date,
           simpson_characters (name)
         )
       `)
@@ -228,7 +276,6 @@ export const database = {
       .select(`
         *,
         daily_characters (
-          game_date,
           simpson_characters (name)
         )
       `)
@@ -247,17 +294,19 @@ export const database = {
 
   // Check if user has already played today
   async hasPlayedToday(userId?: string): Promise<boolean> {
-    const today = new Date().toISOString().split('T')[0]
+    const todayDate = getTodayDateString()
     
-    const { data: dailyChar, error: dailyError } = await supabase
+    const { data: dailyCharData, error: dailyError } = await supabase
       .from('daily_characters')
       .select('id')
-      .eq('game_date', today)
-      .single()
+      .eq('game_date', todayDate)
+      .limit(1)
     
-    if (dailyError || !dailyChar) {
+    if (dailyError || !dailyCharData || dailyCharData.length === 0) {
       return false
     }
+    
+    const dailyChar = dailyCharData[0]
 
     let query = supabase
       .from('user_games')
@@ -272,6 +321,7 @@ export const database = {
     
     const { data, error } = await query.single()
     
+    // Return true if we found a game, false if not found or error
     return !error && !!data
   }
 } 

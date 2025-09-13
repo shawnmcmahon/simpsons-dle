@@ -71,41 +71,6 @@ export default function SimpsonsDLE() {
     }
   }, [gameCompleted]);
 
-  async function fetchTodaysCharacterDirectly() {
-    // Get today's date in YYYY-MM-DD
-    const today = "2025-07-15"
-
-    // 1. Query daily_characters for today's row
-    const { data: daily, error: dailyError } = await supabase
-      .from('daily_characters')
-      .select('character_id')
-      .eq('game_date', today)
-      .single();
-
-    console.log('Daily:', daily, 'Error:', dailyError);
-
-    if (dailyError || !daily) {
-      setError('No daily character found for today');
-      setTodaysCharacter(null);
-      return null;
-    }
-
-    // 2. Query simpson_characters for the character
-    const { data: character, error: charError } = await supabase
-      .from('simpson_characters')
-      .select('*')
-      .eq('id', daily.character_id)
-      .single();
-
-    if (charError || !character) {
-      setError('No character found for today');
-      setTodaysCharacter(null);
-      return null;
-    }
-    console.log('Character:', character, 'Error:', charError);
-    setTodaysCharacter(character);
-    return character;
-  }
 
   const initializeGame = async (useRandomCharacter = false) => {
     try {
@@ -132,13 +97,15 @@ export default function SimpsonsDLE() {
         const randomIndex = Math.floor(Math.random() * filteredCharacters.length);
         character = filteredCharacters[randomIndex];
         addSeenPracticeCharacter(character.id);
-        setTodaysCharacter(character);
         setIsRandomGame(true);
       } else {
-        character = await fetchTodaysCharacterDirectly();
+        character = await database.getTodaysCharacter();
         setIsRandomGame(false);
       }
-      console.log('Todays Character:', todaysCharacter);
+      
+      // Set the character state after getting it
+      setTodaysCharacter(character);
+      console.log('Todays Character:', character);
       if (character === null) {
         setError('No character found')
         return
@@ -285,10 +252,10 @@ export default function SimpsonsDLE() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-100">
+      <div className="min-h-screen flex items-center justify-center" style={{background: 'radial-gradient(circle, rgba(57, 59, 116, 1) 0%, rgba(26, 0, 71, 1) 100%)'}}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading today{'\u2019'}s character...</p>
+          <p className="text-lg text-white">Loading today{'\u2019'}s character...</p>
         </div>
       </div>
     )
@@ -296,10 +263,10 @@ export default function SimpsonsDLE() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-100">
+      <div className="min-h-screen flex items-center justify-center" style={{background: 'radial-gradient(circle, rgba(57, 59, 116, 1) 0%, rgba(26, 0, 71, 1) 100%)'}}>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-          <p className="text-gray-600">{error}</p>
+          <h1 className="text-2xl font-bold text-white mb-4">Error</h1>
+          <p className="text-white">{error}</p>
         </div>
       </div>
     )
@@ -307,25 +274,25 @@ export default function SimpsonsDLE() {
 
   if (!todaysCharacter) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-100">
+      <div className="min-h-screen flex items-center justify-center" style={{background: 'radial-gradient(circle, rgba(57, 59, 116, 1) 0%, rgba(26, 0, 71, 1) 100%)'}}>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">No Character Found</h1>
-          <p className="text-gray-600">No character is scheduled for today.</p>
+          <h1 className="text-2xl font-bold text-white mb-4">No Character Found</h1>
+          <p className="text-white">No character is scheduled for today.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-yellow-100 p-8">
+    <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{background: 'radial-gradient(circle, rgba(57, 59, 116, 1) 0%, rgba(26, 0, 71, 1) 100%)'}}>
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-blue-600 mb-4">Simpson&apos;s DLE</h1>
-        <p className="text-xl text-gray-700 mb-6">Guess the Simpson{'\u2019'}s Character</p>
+        <h1 className="text-3xl font-bold mb-4" style={{color: '#ffcf22'}}>Simpson&apos;s DLE</h1>
+        <p className="text-xl text-white mb-6">The Daily Simpson{'\u2019'}s Character Guessing Game</p>
         
         {/* Today's Character Image */}
         <div className="mb-6">
           <Image
-            src={gameCompleted ? todaysCharacter.image_url : "/the-simpsons.png"}
+            src={gameCompleted ? todaysCharacter.image_url : "/simpsons-couch.avif"}
             alt={gameCompleted ? `Today${'\u2019'}s Character` : "Mystery Character"}
             width={600}
             height={800}
@@ -336,7 +303,7 @@ export default function SimpsonsDLE() {
 
         {/* Game Status */}
         {gameCompleted && (
-          <div className={`text-xl font-bold mb-4 ${gameWon ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`text-xl font-bold mb-4 text-white`}>
             {gameWon ? '🎉 Congratulations! You guessed correctly!' : '❌ Game Over! You ran out of attempts.'}
           </div>
         )}
@@ -346,19 +313,19 @@ export default function SimpsonsDLE() {
           {/* Hint Labels */}
           <div className="flex gap-4 mb-2 justify-center">
             <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">First Season Appearance</span>
+              <span className="text-sm font-bold text-white">First Season Appearance</span>
             </div>
             <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">First Episode Appearance</span>
+              <span className="text-sm font-bold text-white">First Episode Appearance</span>
             </div>
             <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">Occupation</span>
+              <span className="text-sm font-bold text-white">Occupation</span>
             </div>
             <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">Gender</span>
+              <span className="text-sm font-bold text-white">Gender</span>
             </div>
             <div className="w-20 text-center">
-              <span className="text-sm font-bold text-gray-700">Hair Color</span>
+              <span className="text-sm font-bold text-white">Hair Color</span>
             </div>
           </div>
           
@@ -411,11 +378,11 @@ export default function SimpsonsDLE() {
         <div className="flex gap-4 justify-center items-center">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span className="text-sm font-semibold text-gray-700">Green = Correct</span>
+            <span className="text-sm font-semibold text-white">Green = Correct</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-red-500 rounded"></div>
-            <span className="text-sm font-semibold text-gray-700">Red = Incorrect</span>
+            <span className="text-sm font-semibold text-white">Red = Incorrect</span>
           </div>
         </div>
       </div>
@@ -442,7 +409,7 @@ export default function SimpsonsDLE() {
             />
           ))}
           {/* Guess Counter */}
-          <div className="text-center text-gray-700 mt-2 font-semibold">
+          <div className="text-center text-white mt-2 font-semibold">
             Guess {guessInputs.length} of 5
           </div>
         </div>
@@ -451,10 +418,10 @@ export default function SimpsonsDLE() {
       {/* Final Result */}
       {gameCompleted && (
         <div className="mt-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="text-2xl font-bold text-white mb-2">
             {isRandomGame ? 'Character' : `Today${'\u2019'}s Character`}: {todaysCharacter.name}
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-white mb-4">
             {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
           </p>
           <button

@@ -94,8 +94,8 @@ export default function CharacterAutocomplete({
         }}
         placeholder={placeholder}
         disabled={disabled}
-        className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black font-semibold ${
-          disabled ? 'bg-gray-200 cursor-not-allowed text-gray-800' : ''
+        className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white font-semibold ${
+          disabled ? 'bg-gray-200 cursor-not-allowed text-white' : ''
         } ${className}`}
       />
       
@@ -107,7 +107,7 @@ export default function CharacterAutocomplete({
               key={character.id}
               type="button"
               onClick={() => handleSelect(character)}
-              className={`w-full px-4 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none font-semibold text-gray-900 ${
+              className={`w-full px-4 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none font-semibold text-white ${
                 index === 0 ? 'rounded-t-lg' : ''
               } ${
                 index === filteredCharacters.length - 1 ? 'rounded-b-lg' : ''
