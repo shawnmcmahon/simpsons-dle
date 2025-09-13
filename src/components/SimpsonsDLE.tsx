@@ -5,6 +5,9 @@ import Image from 'next/image'
 import { database, SimpsonCharacter, HintComparison } from '@/lib/database'
 import CharacterAutocomplete from './CharacterAutocomplete'
 import { supabase } from '../lib/supabase'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 interface GameAttempt {
   character: SimpsonCharacter
@@ -401,7 +404,6 @@ export default function SimpsonsDLE() {
             <span className="text-sm font-semibold text-white">Red = Incorrect</span>
           </div>
         </div>
-      </div>
 
       {/* Input Boxes */}
       {!gameCompleted && (
@@ -462,4 +464,4 @@ export default function SimpsonsDLE() {
       )}
     </div>
   )
-} 
+}

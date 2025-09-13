@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { SimpsonCharacter } from '@/lib/database'
+import { Input } from '@/components/ui/input'
 
 interface CharacterAutocompleteProps {
   value: string
@@ -80,7 +81,7 @@ export default function CharacterAutocomplete({
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <input
+      <Input
         ref={inputRef}
         type="text"
         value={value}
