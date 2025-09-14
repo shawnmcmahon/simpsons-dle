@@ -283,7 +283,7 @@ export default function SimpsonsDLE() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{background: 'radial-gradient(circle, rgba(57, 59, 116, 1) 0%, rgba(26, 0, 71, 1) 100%)'}}>
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 pb-32" style={{background: 'radial-gradient(circle, rgba(57, 59, 116, 1) 0%, rgba(26, 0, 71, 1) 100%)'}}>
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold mb-4" style={{color: '#ffcf22'}}>Simpson&apos;s DLE</h1>
         <p className="text-xl text-white mb-6">The Daily Simpson{'\u2019'}s Character Guessing Game</p>
@@ -431,35 +431,35 @@ export default function SimpsonsDLE() {
         </div>
       )}
 
-      {/* Final Result */}
-      {gameCompleted && (
-        <div className="mt-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">
-            {isRandomGame ? 'Character' : `Today${'\u2019'}s Character`}: {todaysCharacter.name}
-          </h2>
-          <p className="text-white mb-4">
-            {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
-          </p>
-          <button
-            onClick={handleNewGame}
-            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-          >
-            New Game
-          </button>
-        </div>
-      )}
+       {/* Final Result */}
+       {gameCompleted && (
+         <div className="mt-8 mb-16 text-center">
+           <h2 className="text-2xl font-bold text-white mb-2">
+             {isRandomGame ? 'Character' : `Today${'\u2019'}s Character`}: {todaysCharacter.name}
+           </h2>
+           <p className="text-white mb-4">
+             {isRandomGame ? 'Practice mode completed!' : 'Come back tomorrow for a new character!'}
+           </p>
+           <button
+             onClick={handleNewGame}
+             className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+           >
+             New Game
+           </button>
+         </div>
+       )}
 
-      {/* Reset Daily Game Button (only for daily game, not practice mode) */}
-      {(isRandomGame || !isRandomGame) && (
-        <div className="w-full flex justify-center mt-8">
-          <button
-            onClick={handleResetDailyGame}
-            className="px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
-          >
-            Reset Daily Game
-          </button>
-        </div>
-      )}
+       {/* Reset Daily Game Button (only for daily game, not practice mode) */}
+       {(isRandomGame || !isRandomGame) && (
+         <div className="w-full flex justify-center mt-8" style={{marginBottom: '100px'}}>
+           <button
+             onClick={handleResetDailyGame}
+             className="px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
+           >
+             Reset Daily Game
+           </button>
+         </div>
+       )}
     </div>
   )
 }
